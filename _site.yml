@@ -1,0 +1,49 @@
+name: "PSA002"
+output_dir: "docs"
+navbar:
+  title: "PSA002 Progress Tracking"
+  left:
+    - text: "Overview"
+      icon: fa-home
+      href: index.html
+    - text: "About"
+      icon: fa-info
+      href: about.html
+    - text: "Tracking Logs"
+      icon: fa-globe
+      menu:
+        - text: "Tested Languages"
+        - text: "Simulation"
+          href: Simdata.html
+        - text: "English"
+          href: English.html
+        - text: "Deutsch"
+          href: Deutsch.html
+        - text: "Norwegian"
+          href: Norwegian.html
+        - text: "Greek"
+          href: Greek.html
+        - text: "Italian"
+          href: Italian.html
+        - text: "Spanish"
+          href: Spanish.html
+        - text: "Polish"
+          href: Polish.html
+        - text: "Serbian"
+          href: Serbian.html
+        - text: "Slovak"
+          href: Slovak.html
+        - text: "Hindi"
+          href: Hindi.html
+        - text: "Hungarian"
+          href: Hungarian.html
+        - text: "Turkish"
+          href: Tukish.html
+        - text: "Thai"
+          href: Thai.html
+        - text: "Portuguesa"
+          href: Portuguesa.html
+        - text: "简体中文"
+          href: SC.html
+        - text: "繁體中文"
+          href: TC.html

@@ -1,0 +1,12 @@
+---
+title: "About This Website"
+---
+
+This website summarize the progress of registered laboratories of PSA 002 project: [OBJECT ORIENTATION](https://psysciacc.org/002-object-orientation/). The proposing author and the assistants are updating this site routinely during data collection. 
+
+This website is generaged by `rmarkdown` package. You will find the example in [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html) written by Yihui Xie, J. J. Allaire, and Garrett Grolemund.
+
+- 2019/8/27 Initilization
+- 2019/9/12 Available 003 links: English, Deutsch, Magyar, Norsk, Polski
+- 2919/9/14 Add `log` confirm the lab having the log sheet.
+- 2019/9/24 Update Intro and About pages.

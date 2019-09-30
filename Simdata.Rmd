@@ -1,0 +1,19 @@
+---
+title: "Simulated sequential analysis"
+output: html_document
+---
+
+- SIM_001
+
+```{r sim001, echo=FALSE, message=FALSE, warning=FALSE,fig.align='left',results='asis'}
+#knitr::include_graphics("./docs/img/SIM001.png")
+lab_seq[grep(lab_seq, pattern="SIM_001")] %>% read.csv() %>%
+    seq_plot()
+```
+
+- SIM_002
+```{r sim002, echo=FALSE, message=FALSE, warning=FALSE,fig.align='left',results='asis'}
+#knitr::include_graphics("./docs/img/SIM_002.png")
+lab_seq[grep(lab_seq, pattern="SIM_002")] %>% read.csv() %>%
+    seq_plot()
+```

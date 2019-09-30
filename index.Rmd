@@ -1,0 +1,66 @@
+---
+title: "Progress Overview"
+#date: `r format(Sys.time())`
+output: html_document
+---
+```{r setup, message=FALSE, warning=FALSE, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+library(tidyverse)
+library(osfr)
+##osf_auth(token = "D:/osf-token.txt")
+#library(flexdashboard)
+# List the sequential output of each lab
+lab_seq <- dir(path = "..",pattern = "Seq_output.csv",recursive = TRUE,full.names = TRUE)
+
+# Get the latest lab tracking information
+csv_path <- dir(path="..",recursive = TRUE, pattern = "Lab_info.csv", full.names = TRUE)
+
+# Function of plotting sequential analysis
+seq_plot <- function(data){
+  ## Draw results of sequential analysis
+  with(data, plot(N,BF, type = "b", xlab = "Sample Size", 
+                        ylab = "Bayes Factor", ylim = c(-30, 30), pch = 19, 
+                        col = "gray48", lwd = 2))
+  abline(h = 0, lwd = 1)
+  abline(h = 10, col = "black", lty = 2, lwd = 2)
+  abline(h = -10, col = "black", lty = 2, lwd = 2)
+  text(0, 7 + 0.4, labels = "Evidence for Alternative", 
+       cex = 1.5, col = "black", pos = 4)
+  text(0, -7 - 0.4, labels = "Evidence for Null", 
+       cex = 1.5, col = "black", pos = 4)
+  abline(v = 50, col = "red", lwd = 1)
+}
+```
+### Latest Update
+`r format(Sys.time(),usetz = TRUE)`
+
+### For Participant Labratories
+- Check the [steps manual](https://docs.google.com/document/d/1XFj9qQT500lAEe3fjGNab6TTU_lgUWTiWWSh8oF3jGE/edit?usp=sharing); download the latest OpenSesame Scripts at [Project OSF](https://osf.io/e428p/).
+- Navigate the tracking logs and enter the language page you are testing. There is the link to 003 survey page on the top. The sequential analysis plot for a lab will be avaialbe when a lab has collected 50 participants.
+
+### Information Board
+
+Column names explain:
+
+- **PSA_ID**: Lab ID in Psychological Science Accelerator
+- **N**: Maximal sample size this lab will recruite
+- **Seq_N**: Sample Size to initilize the sequential analysis after 50.
+- **osfid**: OSF repository for collected data
+- **Language**: Primary language this lab is testing
+- **Publicity**: Is this repository public?
+- **log**: Is Lab log available?
+
+```{r lab_osf, echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+info <- read.csv(csv_path) %>% subset(N!=0)
+info$log <- rep("No",length(info$osfid))
+for(i in 1:length(info$osfid)){
+  if(info$Publicity[i] == "Yes"){
+      cr_project <- osf_retrieve_node(as.character(info$osfid[i]))
+     info$log[i] <- ifelse((cr_project %>% osf_ls_files() %>%
+                 select("name") %>%
+                 dim())[1]>0,"Yes","No") 
+  }
+}
+knitr::kable(info[-1], caption = "Labs planned N.")
+```
+

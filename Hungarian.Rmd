@@ -1,0 +1,14 @@
+---
+title: "Overview Magyer Progress"
+output: html_document
+---
+
+- [003 Magyar (Hungarians) survey](http://unf.co1.qualtrics.com/jfe/form/SV_eRsPzaFSS4fLKeN?Q_Language=HU)
+
+- HUN_004
+
+TBA
+
+- HUN_001
+
+TBA

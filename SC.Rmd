@@ -1,0 +1,10 @@
+---
+title: "Overview Simplified Chinese Progress"
+output: html_document
+---
+
+- [003 Simple Chinese survey link](http://unf.co1.qualtrics.com/jfe/form/SV_eRsPzaFSS4fLKeN?Q_Language=ZH-S)
+
+- CHN_019
+
+- CHN_005
