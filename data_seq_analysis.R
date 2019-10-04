@@ -74,7 +74,7 @@ rawdata_SP_V <- dir(path = "d:/", pattern = "rawdata_SP_V", recursive = TRUE, fu
     
 ## Setup of randomization seed
 set.seed(100)
-
+#rootpath = getwd()
 ## Run sequentail analysis and export the result to lab folder
 for(LAB in rawdata_SP_V$PSA_ID){
   route=dir(path = "d:/",pattern = paste0(LAB,"$"), recursive = TRUE, full.names = TRUE, include.dirs = TRUE)

@@ -1,7 +1,10 @@
 base
-coda
-Matrix
-BayesFactor
+methods
+datasets
+utils
+grDevices
+graphics
+stats
 tidyverse
 ggplot2
 tibble
@@ -13,4 +16,7 @@ stringr
 forcats
 data.table
 magrittr
+coda
+Matrix
+BayesFactor
 osfr
