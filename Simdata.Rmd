@@ -12,6 +12,7 @@ lab_seq[grep(lab_seq, pattern="SIM_001")] %>% read.csv() %>%
 ```
 
 - SIM_002
+
 ```{r sim002, echo=FALSE, message=FALSE, warning=FALSE,fig.align='left',results='asis'}
 #knitr::include_graphics("./docs/img/SIM_002.png")
 lab_seq[grep(lab_seq, pattern="SIM_002")] %>% read.csv() %>%
