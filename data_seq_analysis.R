@@ -15,6 +15,9 @@ library(magrittr)
 # Import multiple-bytes string in English system
 Sys.setlocale("LC_ALL","English") 
 
+##set working directory to current project folder
+setwd(here::here())
+
 ## Sequential analysis, subset by the end sequence
 require(BayesFactor)
 
@@ -69,15 +72,16 @@ BF_sequential <- function(DF, acc, scale=0.707){
 }
 
 # Processing lab data
-rawdata_SP_V <- dir(path = "d:/", pattern = "rawdata_SP_V", recursive = TRUE, full.names = TRUE) %>% read.csv
+rawdata_SP_V <- dir(pattern = "rawdata_SP_V", 
+                    recursive = TRUE, full.names = TRUE) %>% read.csv
 
-    
 ## Setup of randomization seed
 set.seed(100)
-#rootpath = getwd()
-## Run sequentail analysis and export the result to lab folder
-for(LAB in rawdata_SP_V$PSA_ID){
-  route=dir(path = "d:/",pattern = paste0(LAB,"$"), recursive = TRUE, full.names = TRUE, include.dirs = TRUE)
+
+## Run sequential analysis and export the result to lab folder
+for(LAB in unique(rawdata_SP_V$PSA_ID)){
+  route <- dir(pattern = paste0(LAB,"$"), 
+            recursive = TRUE, full.names = TRUE, include.dirs = TRUE)
   
   BF_sequential(subset(rawdata_SP_V, PSA_ID == LAB)) %>%
     write.csv(file = paste0(route,"/Seq_output.csv"),row.names = FALSE)
