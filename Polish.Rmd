@@ -3,6 +3,20 @@ title: "Overview Polish Progress"
 output: html_document
 ---
 
-- [003 Polski (Polish) survey](http://unf.co1.qualtrics.com/jfe/form/SV_eRsPzaFSS4fLKeN?Q_Language=PL)
+[003 Polski (Polish) survey](http://unf.co1.qualtrics.com/jfe/form/SV_eRsPzaFSS4fLKeN?Q_Language=PL)
 
-- POL_001
+```{r polish, results = 'asis', echo = FALSE}
+
+for (LAB in lab_info$PSA_ID[lab_info$Language == "Polish"])
+{
+    cat(LAB, "<p>")
+    
+    #only print if they have something 
+    if (length(lab_seq[grep(lab_seq, pattern=LAB)]) > 0){
+    lab_seq[grep(lab_seq, pattern=LAB)] %>% read.csv() %>%
+    seq_plot()} else {cat("TBA")}
+    
+    cat("<p>")
+}
+
+```

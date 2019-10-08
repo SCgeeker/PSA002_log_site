@@ -9,6 +9,7 @@ library(tidyverse)
 library(osfr)
 ##osf_auth(token = "D:/osf-token.txt")
 #library(flexdashboard)
+
 # List the sequential output of each lab
 lab_seq <- dir(path = "..",pattern = "Seq_output.csv",recursive = TRUE,full.names = TRUE)
 
@@ -30,27 +31,30 @@ seq_plot <- function(data){
        cex = 1.5, col = "black", pos = 4)
   abline(v = 50, col = "red", lwd = 1)
 }
+
 ```
+
 ### Latest Update
 `r format(Sys.time(),usetz = TRUE)`
 
-### For Participant Labratories
+### For Participant Laboratories
 - Check the [steps manual](https://docs.google.com/document/d/1XFj9qQT500lAEe3fjGNab6TTU_lgUWTiWWSh8oF3jGE/edit?usp=sharing); download the latest OpenSesame Scripts at [Project OSF](https://osf.io/e428p/).
-- Navigate the tracking logs and enter the language page you are testing. There is the link to 003 survey page on the top. The sequential analysis plot for a lab will be avaialbe when a lab has collected 50 participants.
+- Navigate the tracking logs and enter the language page you are testing. There is the link to 003 survey page on the top. The sequential analysis plot for a lab will be available when a lab has collected 50 participants.
 
 ### Information Board
 
 Column names explain:
 
 - **PSA_ID**: Lab ID in Psychological Science Accelerator
-- **N**: Maximal sample size this lab will recruite
-- **Seq_N**: Sample Size to initilize the sequential analysis after 50.
+- **N**: Maximal sample size this lab will recruit
+- **Seq_N**: Sample Size to initialize the sequential analysis after 50.
 - **osfid**: OSF repository for collected data
 - **Language**: Primary language this lab is testing
 - **Publicity**: Is this repository public?
 - **log**: Is Lab log available?
 
 ```{r lab_osf, echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+
 info <- read.csv(csv_path) %>% subset(N!=0)
 info$log <- rep("No",length(info$osfid))
 for(i in 1:length(info$osfid)){

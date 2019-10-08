@@ -3,12 +3,20 @@ title: "Overview Magyer Progress"
 output: html_document
 ---
 
-- [003 Magyar (Hungarians) survey](http://unf.co1.qualtrics.com/jfe/form/SV_eRsPzaFSS4fLKeN?Q_Language=HU)
+[003 Magyar (Hungarians) survey](http://unf.co1.qualtrics.com/jfe/form/SV_eRsPzaFSS4fLKeN?Q_Language=HU)
 
-- HUN_004
+```{r hungary, results = 'asis', echo = FALSE}
 
-TBA
+for (LAB in lab_info$PSA_ID[lab_info$Language == "Magyar"])
+{
+    cat(LAB, "<p>")
+    
+    #only print if they have something 
+    if (length(lab_seq[grep(lab_seq, pattern=LAB)]) > 0){
+    lab_seq[grep(lab_seq, pattern=LAB)] %>% read.csv() %>%
+    seq_plot()} else {cat("TBA")}
+    
+    cat("<p>")
+}
 
-- HUN_001
-
-TBA
+```

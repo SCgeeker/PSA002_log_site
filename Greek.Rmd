@@ -3,8 +3,20 @@ title: "Overview Greek Progress"
 output: html_document
 ---
 
-- TBA: 003 Survey Link
+TBA: 003 Survey Link
 
-- GRC_002
+```{r greek, results = 'asis', echo = FALSE}
 
-TBA
+for (LAB in lab_info$PSA_ID[lab_info$Language == "Greek"])
+{
+    cat(LAB, "<p>")
+    
+    #only print if they have something 
+    if (length(lab_seq[grep(lab_seq, pattern=LAB)]) > 0){
+    lab_seq[grep(lab_seq, pattern=LAB)] %>% read.csv() %>%
+    seq_plot()} else {cat("TBA")}
+    
+    cat("<p>")
+}
+
+```
