@@ -72,7 +72,8 @@ BF_sequential <- function(DF, acc, scale=0.707){
 }
 
 # Processing lab data
-rawdata_SP_V <- dir(pattern = "rawdata_SP_V", 
+rawdata_SP_V <- dirname(getwd()) %>% 
+                dir(pattern = "rawdata_SP_V", 
                     recursive = TRUE, full.names = TRUE) %>% read.csv
 
 ## Setup of randomization seed
@@ -80,7 +81,8 @@ set.seed(100)
 
 ## Run sequential analysis and export the result to lab folder
 for(LAB in unique(rawdata_SP_V$PSA_ID)){
-  route <- dir(pattern = paste0(LAB,"$"), 
+  route <- dirname(getwd()) %>% 
+          dir(pattern = paste0(LAB,"$"), 
             recursive = TRUE, full.names = TRUE, include.dirs = TRUE)
   
   BF_sequential(subset(rawdata_SP_V, PSA_ID == LAB)) %>%

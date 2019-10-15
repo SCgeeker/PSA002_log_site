@@ -16,64 +16,64 @@ library(osfr)
 ##set working directory to current project folder
 setwd(here::here())
 
-## Get the lab info from csv file
-lab_info <- getwd() %>%
-  paste0("/",dir(recursive = TRUE, pattern = "Lab_info.csv"))  %>%
+## Get the lab info from csv file 
+## We stored lab info in the directory "log"
+lab_info <- dirname(getwd()) %>%
+  dir(full.names = TRUE, recursive = TRUE, include.dirs = TRUE, pattern = "Lab_info.csv")  %>%
   read.csv()
 
 ## Check the status of the data osf
 ## Reserve the id for processing
 ## Method to download multiple data in one OSF:
 ## https://github.com/CenterForOpenScience/osfr/issues/98
-old_path = getwd() ## Store the root directory
+old_path = dirname(getwd()) ## Store the root directory
 N_files <- NULL
 
 ##loop over osf_ids
 for(osf_id in lab_info$osfid){
-
-  ##make sure it's public
+  ## Check the publicity of lab OSF
   if(subset(lab_info, osfid == osf_id)$Publicity == "Yes"){
     
-    ##look at their project
-    cr_project <- osf_retrieve_node(osf_id)
+  ##look at their project
+  cr_project <- osf_retrieve_node(osf_id)
+  
+  ## Get file list from OSF
+  osf_data <- osf_ls_files(cr_project,n_max = Inf)
+  
+  ## Get the number of files
+  N_files <- c(N_files,dim(osf_data)[1])
+  
+  ##make sure this lab OSF is public & has collected data
+  if(subset(lab_info, osfid == osf_id)$N > 0 & 
+     tail(N_files,1) > 100){
     
-    ## Get file list from OSF
-    osf_data <- osf_ls_files(cr_project,n_max = Inf)
-    
-    ## Get the number of files
-    N_files <- c(N_files,dim(osf_data)[1])
-    
-    ## Check if the folder exists to put the data
-    if(!dir.exists(paths=paste0(old_path,"/EXPDATA/raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))){
-      dir.create(paste0("EXPDATA/raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))
-    }
-    
-    ## Switch the working directory
-    setwd(paste0(old_path,"/EXPDATA/raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))
-    
-    ## Grab the list of files in the directory
-    Lab_files <- list.files()
-    
-    ## Find the differences
-    Download_files <- setdiff(osf_data$name, Lab_files)
-    
-    ## If there are new files, download them  
-    if(length(Download_files) > 0) {
-
-      osf_data %>%
-        filter(name %in% Download_files) %>% 
-        {split(., 1:nrow(.))} %>%
-        lapply(osf_download, path= .$name, overwrite = TRUE)
-      
+      ## Check if the folder exists to put the data
+      if(!dir.exists(paths=paste0(old_path,"/raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))){
+        dir.create(paste0(old_path,"/raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))
       }
-      
-      ## Switch back to the root directory
-      setwd(old_path)
-      
-    }
     
-  }
+      ## Switch the working directory
+      setwd(paste0(old_path,"/raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))
+    
+      ## Grab the list of files in the directory
+      Lab_files <- list.files()
+    
+      ## Find the differences
+      Download_files <- setdiff(osf_data$name, Lab_files)
+    
+      ## If there are new files, download them  
+      if(length(Download_files) > 0) {
 
+        osf_data %>%
+          filter(name %in% Download_files) %>% 
+          {split(., 1:nrow(.))} %>%
+          lapply(osf_download, path= .$name, overwrite = TRUE)
+        }
+     }
+  }
+  ## Switch back to the root directory
+  setwd(old_path)
+}
 
 data_info <- bind_cols(subset(lab_info, Publicity == "Yes"), N_files = N_files)
-data_info %>% write.csv("EXPDATA/raw_data/data_info.csv")
+write.csv(data_info, file=paste0(old_path,"/raw_data/data_info.csv"), row.names = FALSE)
