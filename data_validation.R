@@ -92,17 +92,17 @@ data_info %>%
   mutate_if(is.integer, as.character) %>%
   inner_join(rawdata_SP_V, by=c("SEED" = "LAB_SEED")) %>%
   filter((SEED %in% valid_logs$SEED) & (subject_nr %in% valid_logs$SUBJID)) %>%
-  write.csv(file=paste0(old_path,"/raw_data/rawdata_SP_V.csv"),row.names = FALSE)
+  write.csv(file=paste0(old_path,"/1_raw_data/rawdata_SP_V.csv"),row.names = FALSE)
 ## Raw data of SP memory trials
 data_info %>% select(PSA_ID, SEED) %>%
   mutate_if(is.integer, as.character) %>%
   inner_join(rawdata_SP_M, by=c("SEED" = "LAB_SEED")) %>% 
   filter((SEED %in% valid_logs$SEED) & (subject_nr %in% valid_logs$SUBJID)) %>%
-  write.csv(file=paste0(old_path,"/raw_data/rawdata_SP_M.csv"),row.names = FALSE)
+  write.csv(file=paste0(old_path,"/1_raw_data/rawdata_SP_M.csv"),row.names = FALSE)
 ## Raw data of PP verification trials
 data_info %>% select(PSA_ID, SEED) %>%
   mutate_if(is.integer, as.character) %>%
   inner_join(rawdata_PP, by=c("SEED" = "LAB_SEED")) %>% 
   filter((SEED %in% valid_logs$SEED) & (subject_nr %in% valid_logs$SUBJID)) %>%
-  write.csv(file=paste0(old_path,"/raw_data/rawdata_PP.csv"),row.names = FALSE)
+  write.csv(file=paste0(old_path,"/1_raw_data/rawdata_PP.csv"),row.names = FALSE)
 

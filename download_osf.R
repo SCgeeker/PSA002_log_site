@@ -16,11 +16,6 @@ library(osfr)
 ##set working directory to current project folder
 setwd(here::here())
 
-## Get the lab info from csv file 
-## We stored lab info in the directory "log"
-lab_info <- dirname(getwd()) %>%
-  dir(full.names = TRUE, recursive = TRUE, include.dirs = TRUE, pattern = "Lab_info.csv")  %>%
-  read.csv()
 
 ## Check the status of the data osf
 ## Reserve the id for processing
@@ -48,12 +43,12 @@ for(osf_id in lab_info$osfid){
      tail(N_files,1) > 100){
     
       ## Check if the folder exists to put the data
-      if(!dir.exists(paths=paste0(old_path,"/raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))){
-        dir.create(paste0(old_path,"/raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))
+      if(!dir.exists(paths=paste0(old_path,"/1_raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))){
+        dir.create(paste0(old_path,"/1_raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))
       }
     
       ## Switch the working directory
-      setwd(paste0(old_path,"/raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))
+      setwd(paste0(old_path,"/1_raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))
     
       ## Grab the list of files in the directory
       Lab_files <- list.files()
@@ -76,4 +71,4 @@ for(osf_id in lab_info$osfid){
 }
 
 data_info <- bind_cols(subset(lab_info, Publicity == "Yes"), N_files = N_files)
-write.csv(data_info, file=paste0(old_path,"/raw_data/data_info.csv"), row.names = FALSE)
+write.csv(data_info, file=paste0(old_path,"/1_raw_data/data_info.csv"), row.names = FALSE)

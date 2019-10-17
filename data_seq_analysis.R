@@ -38,13 +38,13 @@ BF_sequential <- function(DF, acc, scale=0.707){
   for(i in data$end_seq){
     
     ## Initial Point
-    if(i == 1){
+    if(i < 3){
       bfProg[i, "ID"] <- as.numeric(names(tmp_seq)[i])
       bfProg[i, "N"] <- 1
-      bfProg[i, "BF"] <- 0
+      bfProg[i, "BF"] <- 1
     }
     
-    if(i > 1){
+    if(i > 2){
       ## BF analysis for large and small objects
       ## Save the current sample size
       bfProg[i, "ID"] <- as.numeric(names(tmp_seq)[i])
