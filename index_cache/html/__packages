@@ -1,4 +1,10 @@
 base
+methods
+datasets
+utils
+grDevices
+graphics
+stats
 tidyverse
 ggplot2
 tibble
@@ -8,9 +14,6 @@ purrr
 dplyr
 stringr
 forcats
+osfr
 data.table
 magrittr
-coda
-Matrix
-BayesFactor
-osfr

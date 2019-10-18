@@ -5,7 +5,7 @@
 # Download rawdata from lab OSF
 # Written by Sau-Chin Chen
 # E-mail: pmsp96@gmail.com
-# Last update: September 30, 2019
+# Last update: October 17, 2019
 #############################################################
 
 library(tidyverse)

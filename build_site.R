@@ -1,5 +1,17 @@
+#######################################################################
+# R code accompanying Sau-Chin Chen et al. (2019)
+# OSF projet: https://osf.io/e428p/
+# ---------------------------------------------------------
+# Download rawdata from lab OSF
+# Written by Erin Buchanan
+# Updated by Sau-Chin Chen
+# E-mail: pmsp96@gmail.com
+# Last update: October 17, 2019
+#############################################################
+
+library(tidyverse)
 # Build the Site ----------------------------------------------------------
-setwd(here::here())
+setwd(here::here() )
 
 ## Clean site when we have to add new lab data
 rmarkdown::clean_site()

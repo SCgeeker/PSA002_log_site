@@ -40,7 +40,7 @@ for(osf_id in lab_info$osfid){
   
   ##make sure this lab OSF is public & has collected data
   if(subset(lab_info, osfid == osf_id)$N > 0 & 
-     tail(N_files,1) > 100){
+     tail(N_files,1) > 10){
     
       ## Check if the folder exists to put the data
       if(!dir.exists(paths=paste0(old_path,"/1_raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))){
