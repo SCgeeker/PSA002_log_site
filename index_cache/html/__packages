@@ -17,3 +17,7 @@ forcats
 osfr
 data.table
 magrittr
+anytime
+coda
+Matrix
+BayesFactor

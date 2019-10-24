@@ -11,6 +11,7 @@
 library(tidyverse)
 library(data.table)
 library(magrittr)
+library(anytime) ## Convert date from multiple formats
 
 # Import multiple-bytes string in English system
 Sys.setlocale("LC_ALL","English") 
@@ -78,19 +79,41 @@ for(LAB in data_dir){
     }
   }
   
+  ## Validate SP file size
+  ## Code the SP files beyond 100k
+  SP_ind <- ((SP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_SP_", recursive = TRUE, full.names = TRUE)) %>%
+      file.info() %>%
+      select(size) > 100000) %>%
+      which()
+  
   ## Import SP verification data
-  rawdata_SP_V <- bind_rows(rawdata_SP_V,dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_SP_", recursive = TRUE, full.names = TRUE)  %>%
+  rawdata_SP_V <- bind_rows(rawdata_SP_V, SP_path[SP_ind]  %>%
     lapply(read.csv) %>% rbindlist(fill = TRUE) %>%
-    filter(Task == "V") %>% mutate_if(is.integer, as.character))
+    filter(Task == "V") %>% mutate_if(is.integer, as.character) %>%
+      ## Retreive the columns for summary
+      select(datetime,LAB_SEED,subject_nr,task_order,List,Match,Orientation,PList,Probe,Target,response_time,correct,opensesame_codename,opensesame_version))
   
   ## Import SP memory data
-  rawdata_SP_M <- bind_rows(rawdata_SP_M, dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_SP_", recursive = TRUE, full.names = TRUE)  %>%
-    lapply(read.csv) %>% rbindlist(fill = TRUE) %>%
-    filter(Task == "M") %>% mutate_if(is.integer, as.character))
+  rawdata_SP_M <- bind_rows(rawdata_SP_M, SP_path[SP_ind]  %>%
+    lapply(read.csv)  %>%
+      rbindlist(fill = TRUE) %>%
+    filter(Task == "M") %>% mutate_if(is.integer, as.character) %>%
+    ## Retreive the columns for summary 
+    select(datetime,LAB_SEED,subject_nr,List,PList,Probe,response_time,correct,opensesame_codename,opensesame_version,alt_task)  )
+  
+  
+  ## Validate PP file size
+  ## Code the PP files beyond 70k
+  PP_ind <- ((PP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_PP_", recursive = TRUE, full.names = TRUE)) %>%
+               file.info() %>%
+               select(size) > 70000) %>%
+               which()
   
   ## Import PP verification data
-  rawdata_PP <- bind_rows(rawdata_PP, dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_PP_", recursive = TRUE, full.names = TRUE)  %>%
-    lapply(read.csv) %>% rbindlist(fill = TRUE) %>% mutate_if(is.integer, as.character))
+  rawdata_PP <- bind_rows(rawdata_PP, PP_path[PP_ind]  %>%
+    lapply(read.csv) %>% rbindlist(fill = TRUE) %>% mutate_if(is.integer, as.character) %>%
+      ## Retreive the columns for summary
+      select(datetime,LAB_SEED,subject_nr,PPList,Orientation1,Orientation2,Identical,Picture1,Picture2,response_time,correct,opensesame_codename,opensesame_version))
 }
 
 
@@ -99,6 +122,8 @@ invalid_logs <- rawdata_log %>% filter((DATE!= "")) %>%
   filter(Note %in% excluded_words) %>%
   select("SEED", "SUBJID")
 
+rawdata_log %>% subset(DATE != "") %>%
+  mutate(log_date = anydate(DATE))
 
 #### Below code validates the consistency between lab log and SP rawdata
 #### DATE format require updateings.
@@ -106,12 +131,12 @@ invalid_logs <- rawdata_log %>% filter((DATE!= "")) %>%
 ## Mutate and retrieve the log cells for validation
 ((rawdata_log %>% subset(DATE != "") %>%
     ### Not all DATE could be transfered
-  mutate(log_date = as.Date(DATE,"%d/%m/%Y"), log_order = if_else(Sequence == "002_SP -> 002_PP -> 003","Yes","No")) %>% 
+  mutate(log_date = anydate(DATE), log_order = if_else(Sequence == "002_SP -> 002_PP -> 003","Yes","No")) %>% 
   select(SEED, SUBJID, log_date, log_order)) == 
 ## Mutate and retrieve the rawdata cells for validation
 (rawdata_SP_V %>% group_by(LAB_SEED, date = as.Date(datetime,"%m/%d/%y"), subject_nr,task_order) %>%
   summarise(n()) %>% arrange(subject_nr) %>%  
-  select(LAB_SEED, subject_nr, date, task_order) %>% as.data.frame())) %>%
+  select(LAB_SEED, subject_nr, date, task_order) %>% as.data.frame()) ) %>%
 colSums() ## If the lab follow the log sheet, the numbers will equal to the number of available of data files.
 
 ## append PSA_ID to rawdata
@@ -121,18 +146,18 @@ data_info %>%
   select(PSA_ID, SEED) %>%
   mutate_if(is.integer, as.character) %>%
   inner_join(rawdata_SP_V, by=c("SEED" = "LAB_SEED")) %>%
-  filter(!(SEED %in% invalid_logs$SEED) & !(subject_nr %in% invalid_logs$SUBJID)) %>%
+  #filter(!(SEED %in% invalid_logs$SEED) & !(subject_nr %in% invalid_logs$SUBJID)) %>%
   write.csv(file=paste0(old_path,"/1_raw_data/rawdata_SP_V.csv"),row.names = FALSE)
 ## Raw data of SP memory trials
 data_info %>% select(PSA_ID, SEED) %>%
   mutate_if(is.integer, as.character) %>%
   inner_join(rawdata_SP_M, by=c("SEED" = "LAB_SEED")) %>% 
-  filter(!(SEED %in% invalid_logs$SEED) & !(subject_nr %in% invalid_logs$SUBJID)) %>%
+  #filter(!(SEED %in% invalid_logs$SEED) & !(subject_nr %in% invalid_logs$SUBJID)) %>%
   write.csv(file=paste0(old_path,"/1_raw_data/rawdata_SP_M.csv"),row.names = FALSE)
 ## Raw data of PP verification trials
 data_info %>% select(PSA_ID, SEED) %>%
   mutate_if(is.integer, as.character) %>%
   inner_join(rawdata_PP, by=c("SEED" = "LAB_SEED")) %>% 
-  filter(!(SEED %in% invalid_logs$SEED) & !(subject_nr %in% invalid_logs$SUBJID)) %>%
+  #filter(!(SEED %in% invalid_logs$SEED) & !(subject_nr %in% invalid_logs$SUBJID)) %>%
   write.csv(file=paste0(old_path,"/1_raw_data/rawdata_PP.csv"),row.names = FALSE)
 
