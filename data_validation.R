@@ -139,6 +139,10 @@ rawdata_log %>% subset(DATE != "") %>%
   select(LAB_SEED, subject_nr, date, task_order) %>% as.data.frame()) ) %>%
 colSums() ## If the lab follow the log sheet, the numbers will equal to the number of available of data files.
 
+## Save rawdata lab log 
+rawdata_log %>%
+  write.csv(file=paste0(old_path,"/1_raw_data/rawdata_log.csv"))
+
 ## append PSA_ID to rawdata
 ## Export all the valid rawdata to the single file
 ## Raw data of SP verification trials
