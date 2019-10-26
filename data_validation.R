@@ -11,7 +11,6 @@
 library(tidyverse)
 library(data.table)
 library(magrittr)
-library(anytime) ## Convert date from multiple formats
 
 # Import multiple-bytes string in English system
 Sys.setlocale("LC_ALL","English") 
@@ -86,12 +85,17 @@ for(LAB in data_dir){
       select(size) > 100000) %>%
       which()
   
+  ## Extract valid Lab seed
+  valid_SEED <- rawdata_log$SEED %>% unique()
+
   ## Import SP verification data
   rawdata_SP_V <- bind_rows(rawdata_SP_V, SP_path[SP_ind]  %>%
     lapply(read.csv) %>% rbindlist(fill = TRUE) %>%
     filter(Task == "V") %>% mutate_if(is.integer, as.character) %>%
       ## Retreive the columns for summary
       select(datetime,LAB_SEED,subject_nr,task_order,List,Match,Orientation,PList,Probe,Target,response_time,correct,opensesame_codename,opensesame_version))
+  ## Filter invalid lab seed
+  rawdata_SP_V <- rawdata_SP_V %>% filter(LAB_SEED %in% valid_SEED)
   
   ## Import SP memory data
   rawdata_SP_M <- bind_rows(rawdata_SP_M, SP_path[SP_ind]  %>%
@@ -100,7 +104,8 @@ for(LAB in data_dir){
     filter(Task == "M") %>% mutate_if(is.integer, as.character) %>%
     ## Retreive the columns for summary 
     select(datetime,LAB_SEED,subject_nr,List,PList,Probe,response_time,correct,opensesame_codename,opensesame_version,alt_task)  )
-  
+  ## Filter invalid lab seed
+  rawdata_SP_M <- rawdata_SP_M %>% filter(LAB_SEED %in% valid_SEED)
   
   ## Validate PP file size
   ## Code the PP files beyond 70k
@@ -114,34 +119,48 @@ for(LAB in data_dir){
     lapply(read.csv) %>% rbindlist(fill = TRUE) %>% mutate_if(is.integer, as.character) %>%
       ## Retreive the columns for summary
       select(datetime,LAB_SEED,subject_nr,PPList,Orientation1,Orientation2,Identical,Picture1,Picture2,response_time,correct,opensesame_codename,opensesame_version))
+  ## Filter invalid lab seed
+  rawdata_PP <- rawdata_PP %>% filter(LAB_SEED %in% valid_SEED)
 }
 
+## Save rawdata lab log 
+rawdata_log %>%
+  write.csv(file=paste0(old_path,"/1_raw_data/rawdata_log.csv"))
 
 ## Managing: Filter the invalid participants
 invalid_logs <- rawdata_log %>% filter((DATE!= "")) %>% 
   filter(Note %in% excluded_words) %>%
   select("SEED", "SUBJID")
 
-rawdata_log %>% subset(DATE != "") %>%
-  mutate(log_date = anydate(DATE))
+## Clean date formats
+require(lubridate)
 
 #### Below code validates the consistency between lab log and SP rawdata
 #### DATE format require updateings.
+## Rearrange the lab log and unify the date format for validation
+log_df <- (rawdata_log %>% subset(!is.na(DATE)) %>%
+    ### Not all DATE could be transfered
+  mutate(lab_date = DATE %>% parse_date_time(orders = c('dmy','dmy','ymd','ymd','dmy','ydm','dmy','mdy','ymd','dmy')), 
+         task_order = if_else(Sequence == "002_SP -> 002_PP -> 003","Yes","No")) %>% 
+  select(SEED, SUBJID, lab_date, task_order) %>%
+  arrange(SEED, SUBJID))
 ## Check the order and date of SP
 ## Mutate and retrieve the log cells for validation
-((rawdata_log %>% subset(DATE != "") %>%
-    ### Not all DATE could be transfered
-  mutate(log_date = anydate(DATE), log_order = if_else(Sequence == "002_SP -> 002_PP -> 003","Yes","No")) %>% 
-  select(SEED, SUBJID, log_date, log_order)) == 
 ## Mutate and retrieve the rawdata cells for validation
-(rawdata_SP_V %>% group_by(LAB_SEED, date = as.Date(datetime,"%m/%d/%y"), subject_nr,task_order) %>%
-  summarise(n()) %>% arrange(subject_nr) %>%  
-  select(LAB_SEED, subject_nr, date, task_order) %>% as.data.frame()) ) %>%
-colSums() ## If the lab follow the log sheet, the numbers will equal to the number of available of data files.
+SP_df <- (rawdata_SP_V %>% 
+   mutate( lab_date = datetime %>% parse_date_time(orders = c('mdy HMS','b d HMS Y'))  %>%
+             as.Date() ) %>%
+   group_by(LAB_SEED, subject_nr, lab_date, task_order) %>%
+   summarise(N_trials = n()) %>% 
+   arrange(LAB_SEED, as.numeric(subject_nr) ) %>%  
+   rename(SEED = LAB_SEED, SUBJID = subject_nr, lab_date = lab_date, task_order = task_order, N_trials = N_trials) %>% 
+   as.data.frame() ) 
 
-## Save rawdata lab log 
-rawdata_log %>%
-  write.csv(file=paste0(old_path,"/1_raw_data/rawdata_log.csv"))
+log_df[,3] <- as.Date(log_df[,3])
+SP_df[,1] <- as.numeric(SP_df[,1])
+SP_df[,2] <- as.numeric(SP_df[,2])
+
+full_join(log_df, SP_df) %>% write.csv(file=paste0(old_path,"/1_raw_data/data_validataion.csv"))
 
 ## append PSA_ID to rawdata
 ## Export all the valid rawdata to the single file
