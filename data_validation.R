@@ -5,7 +5,7 @@
 # Download rawdata from lab OSF
 # Written by Sau-Chin Chen
 # E-mail: pmsp96@gmail.com
-# Last update: October 18, 2019
+# Last update: October 27, 2019
 #############################################################
 
 library(tidyverse)
@@ -93,7 +93,8 @@ for(LAB in data_dir){
     lapply(read.csv) %>% rbindlist(fill = TRUE) %>%
     filter(Task == "V") %>% mutate_if(is.integer, as.character) %>%
       ## Retreive the columns for summary
-      select(datetime,LAB_SEED,subject_nr,task_order,List,Match,Orientation,PList,Probe,Target,response_time,correct,opensesame_codename,opensesame_version))
+      select(datetime,LAB_SEED,subject_nr,task_order,List,Match,Orientation,PList,Probe,Target,response_time,correct,opensesame_codename,opensesame_version)) %>%
+      arrange(LAB_SEED, as.numeric(subject_nr))
   ## Filter invalid lab seed
   rawdata_SP_V <- rawdata_SP_V %>% filter(LAB_SEED %in% valid_SEED)
   
@@ -127,11 +128,6 @@ for(LAB in data_dir){
 rawdata_log %>%
   write.csv(file=paste0(old_path,"/1_raw_data/rawdata_log.csv"))
 
-## Managing: Filter the invalid participants
-invalid_logs <- rawdata_log %>% filter((DATE!= "")) %>% 
-  filter(Note %in% excluded_words) %>%
-  select("SEED", "SUBJID")
-
 ## Clean date formats
 require(lubridate)
 
@@ -159,8 +155,15 @@ SP_df <- (rawdata_SP_V %>%
 log_df[,3] <- as.Date(log_df[,3])
 SP_df[,1] <- as.numeric(SP_df[,1])
 SP_df[,2] <- as.numeric(SP_df[,2])
-
+## Export validataion information
 full_join(log_df, SP_df) %>% write.csv(file=paste0(old_path,"/1_raw_data/data_validataion.csv"))
+
+
+## Managing: Filter the invalid participants
+invalid_logs <- rawdata_log %>% filter((DATE!= "")) %>% 
+  filter(Note %in% excluded_words) %>%
+  select("SEED", "SUBJID")
+
 
 ## append PSA_ID to rawdata
 ## Export all the valid rawdata to the single file
@@ -169,18 +172,18 @@ data_info %>%
   select(PSA_ID, SEED) %>%
   mutate_if(is.integer, as.character) %>%
   inner_join(rawdata_SP_V, by=c("SEED" = "LAB_SEED")) %>%
-  #filter(!(SEED %in% invalid_logs$SEED) & !(subject_nr %in% invalid_logs$SUBJID)) %>%
+  filter(!((SEED %in% invalid_logs$SEED) & (subject_nr %in% invalid_logs$SUBJID)) ) %>%
   write.csv(file=paste0(old_path,"/1_raw_data/rawdata_SP_V.csv"),row.names = FALSE)
 ## Raw data of SP memory trials
 data_info %>% select(PSA_ID, SEED) %>%
   mutate_if(is.integer, as.character) %>%
   inner_join(rawdata_SP_M, by=c("SEED" = "LAB_SEED")) %>% 
-  #filter(!(SEED %in% invalid_logs$SEED) & !(subject_nr %in% invalid_logs$SUBJID)) %>%
+  filter(!((SEED %in% invalid_logs$SEED) & (subject_nr %in% invalid_logs$SUBJID)) ) %>%
   write.csv(file=paste0(old_path,"/1_raw_data/rawdata_SP_M.csv"),row.names = FALSE)
 ## Raw data of PP verification trials
 data_info %>% select(PSA_ID, SEED) %>%
   mutate_if(is.integer, as.character) %>%
   inner_join(rawdata_PP, by=c("SEED" = "LAB_SEED")) %>% 
-  #filter(!(SEED %in% invalid_logs$SEED) & !(subject_nr %in% invalid_logs$SUBJID)) %>%
+  filter(!((SEED %in% invalid_logs$SEED) & (subject_nr %in% invalid_logs$SUBJID)) ) %>%
   write.csv(file=paste0(old_path,"/1_raw_data/rawdata_PP.csv"),row.names = FALSE)
 
