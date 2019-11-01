@@ -126,7 +126,7 @@ for(LAB in data_dir){
 
 ## Save rawdata lab log 
 rawdata_log %>%
-  write.csv(file=paste0(old_path,"/1_raw_data/rawdata_log.csv"))
+  write.csv(file=paste0(old_path,"/1_raw_data/rawdata_log.csv"),row.names = FALSE)
 
 ## Clean date formats
 require(lubridate)
@@ -156,7 +156,7 @@ log_df[,3] <- as.Date(log_df[,3])
 SP_df[,1] <- as.numeric(SP_df[,1])
 SP_df[,2] <- as.numeric(SP_df[,2])
 ## Export validataion information
-full_join(log_df, SP_df) %>% write.csv(file=paste0(old_path,"/1_raw_data/data_validataion.csv"))
+full_join(log_df, SP_df) %>% write.csv(file=paste0(old_path,"/1_raw_data/data_validataion.csv"),row.names = FALSE)
 
 
 ## Managing: Filter the invalid participants

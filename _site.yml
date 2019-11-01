@@ -13,34 +13,36 @@ navbar:
       icon: fa-globe
       menu:
         - text: "Tested Languages"
-        - text: "Simulation"
-          href: Simdata.html
+#        - text: "Simulation"
+#          href: Simdata.html
         - text: "English"
           href: English.html
         - text: "Deutsch"
           href: Deutsch.html
-        - text: "Norwegian"
+        - text: "norsk"
           href: Norwegian.html
-        - text: "Greek"
+        - text: "ελληνικά"
           href: Greek.html
-        - text: "Italian"
+        - text: "italiano"
           href: Italian.html
-        - text: "Spanish"
+        - text: "español"
           href: Spanish.html
-        - text: "Polish"
+        - text: "polski"
           href: Polish.html
-        - text: "Serbian"
+        - text: "српски"
           href: Serbian.html
-        - text: "Slovak"
+        - text: "slovenčina"
           href: Slovak.html
-        - text: "Hindi"
+        - text: "मानक हिन्दी"
           href: Hindi.html
-        - text: "Hungarian"
+        - text: "magyar"
           href: Hungarian.html
-        - text: "Turkish"
+        - text: "Türkçe"
           href: Tukish.html
-        - text: "Thai"
+        - text: "ภาษาไทย"
           href: Thai.html
+        - text: "עברית"
+          href: Hebrew.html
         - text: "Portuguesa"
           href: Portuguesa.html
         - text: "简体中文"

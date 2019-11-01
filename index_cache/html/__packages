@@ -17,7 +17,7 @@ forcats
 osfr
 data.table
 magrittr
-lubridate
 coda
 Matrix
 BayesFactor
+lubridate

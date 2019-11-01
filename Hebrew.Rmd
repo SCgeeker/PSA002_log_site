@@ -1,0 +1,22 @@
+---
+title: "Overview Hebrew Progress"
+output: html_document
+---
+
+[003 Hebrew survey link]()
+
+```{r trad_chinese, results = 'asis', echo = FALSE}
+
+for (LAB in lab_info$PSA_ID[lab_info$Language == "Hebrew"])
+{
+    cat(LAB, "<p>")
+    
+    #only print if they have something 
+    if (length(lab_seq[grep(lab_seq, pattern=LAB)]) > 0){
+    lab_seq[grep(lab_seq, pattern=LAB)] %>% read.csv() %>%
+    seq_plot()} else {cat("TBA")}
+    
+    cat("<p>")
+}
+
+```
