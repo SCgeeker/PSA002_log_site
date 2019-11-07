@@ -14,3 +14,4 @@ This website is generaged by `rmarkdown` package. You will find the example in [
 - 2019/9/24 Update Intro and About pages.
 - 2019/10/17 Fix Bayesian sequential analysis outputs.
 - 2019/10/26 Solve the inconsistent date format among labs.
+- 2019/11/7 Data validataion checked; The site shows the date time information on the top page.
