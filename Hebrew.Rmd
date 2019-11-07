@@ -3,9 +3,9 @@ title: "Overview Hebrew Progress"
 output: html_document
 ---
 
-[003 Hebrew survey link]()
+[003 Hebrew survey link](https://unf.co1.qualtrics.com/jfe/form/SV_eRsPzaFSS4fLKeN?Q_Language=EL)
 
-```{r trad_chinese, results = 'asis', echo = FALSE}
+```{r hebrew, results = 'asis', echo = FALSE}
 
 for (LAB in lab_info$PSA_ID[lab_info$Language == "Hebrew"])
 {

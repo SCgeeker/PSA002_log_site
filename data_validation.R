@@ -136,27 +136,39 @@ require(lubridate)
 ## Rearrange the lab log and unify the date format for validation
 log_df <- (rawdata_log %>% subset(!is.na(DATE)) %>%
     ### Not all DATE could be transfered
-  mutate(lab_date = DATE %>% parse_date_time(orders = c('dmy','dmy','ymd','ymd','dmy','ydm','dmy','mdy','ymd','dmy')), 
+  mutate(lab_date = DATE %>% 
+           parse_date_time(orders = c('%d/%m/%Y','%Y-%m-%d','%m/%d/%Y','%d.%m.%Y','%Y.%m.%d','%d-%B-%y'),exact = TRUE) %>%
+           format(format="%Y-%m-%d"), 
          task_order = if_else(Sequence == "002_SP -> 002_PP -> 003","Yes","No")) %>% 
-  select(SEED, SUBJID, lab_date, task_order) %>%
+  select(SEED, SUBJID, lab_date, task_order, Note) %>%
   arrange(SEED, SUBJID))
-## Check the order and date of SP
+## Check the order and date of SP data files
 ## Mutate and retrieve the log cells for validation
 ## Mutate and retrieve the rawdata cells for validation
 SP_df <- (rawdata_SP_V %>% 
-   mutate( lab_date = datetime %>% parse_date_time(orders = c('mdy HMS','b d HMS Y'))  %>%
-             as.Date() ) %>%
+   mutate( lab_date = datetime %>% 
+             parse_date_time(orders = c('mdy HMS','b d HMS Y')) %>%
+             format(format="%Y-%m-%d")) %>%
    group_by(LAB_SEED, subject_nr, lab_date, task_order) %>%
    summarise(N_trials = n()) %>% 
    arrange(LAB_SEED, as.numeric(subject_nr) ) %>%  
    rename(SEED = LAB_SEED, SUBJID = subject_nr, lab_date = lab_date, task_order = task_order, N_trials = N_trials) %>% 
    as.data.frame() ) 
 
-log_df[,3] <- as.Date(log_df[,3])
+## Modify the date format in log file
+#log_df[,3] <- as.Date(log_df[,3])
+## Modify the calss of LAB SEED and Subject ID in SP data files
 SP_df[,1] <- as.numeric(SP_df[,1])
 SP_df[,2] <- as.numeric(SP_df[,2])
+
+## Some labs incorrectly coined the task order of SP
+## Isolate the comment "Wrong choice, Correct sequence" in lab log
+## Switch the label of task_order in the lab log
+log_df$task_order[which(log_df$Note == "Wrong choice, Correct sequence")] = "Yes"
+
+## Merge lab log and SP meta data
 ## Export validataion information
-full_join(log_df, SP_df) %>% write.csv(file=paste0(old_path,"/1_raw_data/data_validataion.csv"),row.names = FALSE)
+inner_join(SP_df, log_df) %>% write.csv(file=paste0(old_path,"/1_raw_data/data_validataion.csv"),row.names = FALSE)
 
 
 ## Managing: Filter the invalid participants
