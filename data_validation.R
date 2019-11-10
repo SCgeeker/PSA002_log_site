@@ -171,6 +171,7 @@ SP_df[,2] <- as.numeric(SP_df[,2])
 ## Isolate the comment "Wrong choice, Correct sequence" in lab log
 ## Switch the label of task_order in the lab log
 log_df$task_order[which(log_df$Note == "Wrong choice, Correct sequence")] = "Yes"
+log_df$task_order[which(log_df$Note == "Wrong order option")] = "none of above"
 
 ## Merge lab log and SP meta data
 ## Export validataion information
