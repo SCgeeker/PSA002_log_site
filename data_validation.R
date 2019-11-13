@@ -5,7 +5,7 @@
 # Download rawdata from lab OSF
 # Written by Sau-Chin Chen
 # E-mail: pmsp96@gmail.com
-# Last update: November 7, 2019
+# Last update: November 13, 2019
 #############################################################
 
 library(tidyverse)
@@ -17,7 +17,8 @@ Sys.setlocale("LC_ALL","English")
 
 # Gather the note from labratories.
 # Participants' data with these words are excluded
-excluded_words <- c("had to leave","SP crashed","didnt finish qualtrics","már volt")
+excluded_words <- c("had to leave","SP crashed","didnt finish qualtrics","már volt","SP & PP Would not work properly
+")
 
 ## Get the data info from csv file 
 data_info <- dirname(getwd()) %>%
@@ -78,9 +79,12 @@ for(LAB in data_dir){
     }
   }
   
+  ## Print message
+  print("lab log loaded.")
+  
   ## Validate SP file size
   ## Code the SP files beyond 100k
-  SP_ind <- ((SP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_SP_", recursive = TRUE, full.names = TRUE)) %>%
+  SP_ind <- ((SP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_SP_|_sp_", recursive = TRUE, full.names = TRUE)) %>%
       file.info() %>%
       select(size) > 100000) %>%
       which()
@@ -98,6 +102,10 @@ for(LAB in data_dir){
   ## Filter invalid lab seed
   rawdata_SP_V <- rawdata_SP_V %>% filter(LAB_SEED %in% valid_SEED)
   
+  ## Print message
+  print("SP verification data loaded.")
+  
+    
   ## Import SP memory data
   rawdata_SP_M <- bind_rows(rawdata_SP_M, SP_path[SP_ind]  %>%
     lapply(read.csv)  %>%
@@ -108,9 +116,12 @@ for(LAB in data_dir){
   ## Filter invalid lab seed
   rawdata_SP_M <- rawdata_SP_M %>% filter(LAB_SEED %in% valid_SEED)
   
+  ## Print message
+  print("SP memory data loaded.")
+  
   ## Validate PP file size
   ## Code the PP files beyond 70k
-  PP_ind <- ((PP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_PP_", recursive = TRUE, full.names = TRUE)) %>%
+  PP_ind <- ((PP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_PP_|_pp_", recursive = TRUE, full.names = TRUE)) %>%
                file.info() %>%
                select(size) > 70000) %>%
                which()
@@ -122,6 +133,11 @@ for(LAB in data_dir){
       select(datetime,LAB_SEED,subject_nr,PPList,Orientation1,Orientation2,Identical,Picture1,Picture2,response_time,correct,opensesame_codename,opensesame_version))
   ## Filter invalid lab seed
   rawdata_PP <- rawdata_PP %>% filter(LAB_SEED %in% valid_SEED)
+  
+  
+  ## Print message
+  print("PP verification data loaded.")
+  
 }
 
 ## Save rawdata lab log 
@@ -153,7 +169,7 @@ log_df <- (rawdata_log %>% subset(!is.na(DATE)) %>%
 ## Mutate and retrieve the rawdata cells for validation
 SP_df <- (rawdata_SP_V %>% 
    mutate( lab_date = datetime %>% 
-             parse_date_time(orders = c('mdy HMS','b d HMS Y')) %>%
+             parse_date_time(orders = c('mdy HMS','b d HMS Y','a b d HMS Y')) %>%
              format(format="%Y-%m-%d")) %>%
    group_by(LAB_SEED, subject_nr, lab_date, task_order) %>%
    summarise(N_trials = n()) %>% 

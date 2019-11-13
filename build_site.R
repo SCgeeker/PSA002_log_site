@@ -26,6 +26,7 @@ lab_info <- dirname(getwd()) %>%
 source("download_osf.R")
 
 # Validate the Data
+setwd(here::here() )
 source("data_validation.R")
 
 # Run the sequential analysis
