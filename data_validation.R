@@ -84,7 +84,7 @@ for(LAB in data_dir){
   
   ## Validate SP file size
   ## Code the SP files beyond 100k
-  SP_ind <- ((SP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_SP_|_sp_", recursive = TRUE, full.names = TRUE)) %>%
+  SP_ind <- ((SP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_SP_|_sp_|-SP_", recursive = TRUE, full.names = TRUE)) %>%
       file.info() %>%
       select(size) > 100000) %>%
       which()
@@ -121,7 +121,7 @@ for(LAB in data_dir){
   
   ## Validate PP file size
   ## Code the PP files beyond 70k
-  PP_ind <- ((PP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_PP_|_pp_", recursive = TRUE, full.names = TRUE)) %>%
+  PP_ind <- ((PP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_PP_|_pp_|-PP_", recursive = TRUE, full.names = TRUE)) %>%
                file.info() %>%
                select(size) > 70000) %>%
                which()
@@ -159,7 +159,7 @@ rawdata_log[rawdata_log$SEED==5186, "DATE"] = rawdata_log %>% filter(SEED==5186)
 log_df <- (rawdata_log %>% subset(!is.na(DATE)) %>%
     ### Not all DATE could be transfered
   mutate(lab_date = DATE %>% 
-           parse_date_time(orders = c('dmy','mdy','ymd') ) %>%
+           parse_date_time(orders = c('dmy','mdy','ymd','dmy, h.m') ) %>%
            format(format="%Y-%m-%d"), 
          task_order = if_else(Sequence == "002_SP -> 002_PP -> 003","Yes","No")) %>% 
   select(SEED, SUBJID, lab_date, task_order, Note) %>%
