@@ -159,7 +159,7 @@ rawdata_log[rawdata_log$SEED==5186, "DATE"] = rawdata_log %>% filter(SEED==5186)
 log_df <- (rawdata_log %>% subset(!is.na(DATE)) %>%
     ### Not all DATE could be transfered
   mutate(lab_date = DATE %>% 
-           parse_date_time(orders = c('dmy','mdy','ymd','dmy, h.m') ) %>%
+           parse_date_time(orders = c('dmy','mdy','ymd','dmy, h.m','ymd, h:m') ) %>%
            format(format="%Y-%m-%d"), 
          task_order = if_else(Sequence == "002_SP -> 002_PP -> 003","Yes","No")) %>% 
   select(SEED, SUBJID, lab_date, task_order, Note) %>%
