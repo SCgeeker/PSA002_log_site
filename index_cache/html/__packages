@@ -14,5 +14,10 @@ purrr
 dplyr
 stringr
 forcats
-osfr
+data.table
+magrittr
 lubridate
+coda
+Matrix
+BayesFactor
+osfr

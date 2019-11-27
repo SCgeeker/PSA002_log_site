@@ -3,7 +3,7 @@ title: "Overview Slovak Progress"
 output: html_document
 ---
 
-[003 survey link](https://scgeeker.github.io/PSA002_log_site/Slovak.html)
+[003 survey link](https://unf.co1.qualtrics.com/jfe/form/SV_eRsPzaFSS4fLKeN?Q_Language=SV)
 
 ```{r slovak, results = 'asis', echo = FALSE}
 
