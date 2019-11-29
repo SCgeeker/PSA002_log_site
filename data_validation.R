@@ -29,7 +29,7 @@ data_info <- dirname(getwd()) %>%
 setwd(here::here())
 
 # Focus on the lab with data files
-data_dir <- subset(data_info, N_files > 8) %>% pull(PSA_ID) %>% as.character()
+data_dir <- subset(data_info, N_files > 10) %>% pull(PSA_ID) %>% as.character()
 old_path = dirname(getwd()) ## Store the root directory
 
 # Check the exist of the data directory
