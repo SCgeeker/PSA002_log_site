@@ -17,7 +17,7 @@ lab_seq <- dir(path = "..",pattern = "Seq_output.csv",recursive = TRUE,full.name
 lab_info_path <- dir(path="..",recursive = TRUE, pattern = "Lab_info.csv", full.names = TRUE)
 
 # Get the available log data
-lab_log_path <- dir(path="..",recursive = TRUE, pattern = "rawdata_log.csv", full.names = TRUE)
+lab_fin_path <- dir(path="..",recursive = TRUE, pattern = "lab_fin.csv", full.names = TRUE)
 
 # Get the available rawdata of verification task
 rawdata_V_path <- dir(path="..",recursive = TRUE, pattern = "rawdata_SP_V.csv", full.names = TRUE)
@@ -61,7 +61,7 @@ Column names explain:
 - **collected_N**: Number of collected participants
 - **begin_date**: First date and time this lab collected the data
 - **latest_date**: Latest date and time this lab collected the data
-
+- **Finish**: '*' represents the labratories that finished the data collection prior to the latest updated date.
 <!---
 - **log**: Is Lab log available?
 --->
@@ -82,6 +82,9 @@ read.csv(rawdata_V_path) %>%
                        ##max(parse_date_time(DATE,orders = c('dmy','mdy','ymd','dmy, h.m','ymd, h:m')) %>%
                                format(format="%Y-%m-%d")))
 )
+
+lab_fin <- read.csv(lab_fin_path)
+info <- data.frame(info, Finish = ifelse(info$PSA_ID %in% lab_fin$PSA_ID, "*",""))
 ##info$log <- rep("No",length(info$osfid))
 ##for(i in 1:length(info$osfid)){
 ##  if(info$Publicity[i] == "Yes"){
