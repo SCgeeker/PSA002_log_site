@@ -5,7 +5,7 @@
 # Download rawdata from lab OSF
 # Written by Sau-Chin Chen
 # E-mail: pmsp96@gmail.com
-# Last update: November 13, 2019
+# Last update: December 4, 2019
 #############################################################
 
 library(tidyverse)
@@ -73,8 +73,8 @@ for(LAB in data_dir){
   if(!is.null(lab_note)){
     rawdata_log <- left_join(rawdata_log, lab_note, by=c("SEED","SUBJID"), copy=TRUE, all = TRUE)
     if(sum(names(rawdata_log) %in% c("Note.x","Note.y")) > 1 ) {
-      rawdata_log$Note.x <- rawdata_log$Note.x %>% str_replace_all(pattern = "<NA>",replacement = "")
-      rawdata_log$Note.y <- rawdata_log$Note.y %>% str_replace_all(pattern = "<NA>",replacement = "")
+      rawdata_log$Note.x <- rawdata_log$Note.x %>% str_replace_all(pattern = "NA",replacement = "")
+      rawdata_log$Note.y <- rawdata_log$Note.y %>% str_replace_all(pattern = "NA",replacement = "")
       rawdata_log <- rawdata_log %>% unite("Note",Note.x:Note.y, remove = TRUE, na.rm=TRUE, sep = "")
     }
   }
@@ -121,7 +121,7 @@ for(LAB in data_dir){
   
   ## Validate PP file size
   ## Code the PP files beyond 70k
-  PP_ind <- ((PP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_PP_|_pp_|-PP_", recursive = TRUE, full.names = TRUE)) %>%
+  PP_ind <- ((PP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_PP_|_pp_|-PP_|_pP_", recursive = TRUE, full.names = TRUE)) %>%
                file.info() %>%
                select(size) > 70000) %>%
                which()
@@ -152,6 +152,11 @@ rawdata_log[rawdata_log$SEED==5186, "DATE"] = rawdata_log %>% filter(SEED==5186)
   mutate(DATE = DATE %>% parse_date_time(order="dmy") %>% as.character()) %>%
   pull(DATE)
 
+## Change date format of THA_001 lab log
+rawdata_log[rawdata_log$SEED==7236, "DATE"] = rawdata_log %>% filter(SEED==7236) %>% 
+  mutate(DATE = DATE %>% parse_date_time(order="dmy") %>% as.character()) %>%
+  pull(DATE)
+
 
 #### Below code validates the consistency between lab log and SP rawdata
 #### DATE format require updateings.
@@ -159,7 +164,7 @@ rawdata_log[rawdata_log$SEED==5186, "DATE"] = rawdata_log %>% filter(SEED==5186)
 log_df <- (rawdata_log %>% subset(!is.na(DATE)) %>%
     ### Not all DATE could be transfered
   mutate(lab_date = DATE %>% 
-           parse_date_time(orders = c('dmy','mdy','ymd','dmy, h.m','ymd, h:m') ) %>%
+           parse_date_time(orders = c('dmy','mdy','ymd','dmy, HM','ymd, HM') ) %>%
            format(format="%Y-%m-%d"), 
          task_order = if_else(Sequence == "002_SP -> 002_PP -> 003","Yes","No")) %>% 
   select(SEED, SUBJID, lab_date, task_order, Note) %>%
