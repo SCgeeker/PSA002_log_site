@@ -12,8 +12,9 @@ for (LAB in lab_info$PSA_ID[lab_info$Language == "Turkish"])
     cat(LAB, "<p>")
     
     #only print if they have something 
-    if (length(lab_seq[grep(lab_seq, pattern=LAB)]) > 0){
-    lab_seq[grep(lab_seq, pattern=LAB)] %>% read.csv() %>%
+    if (length(lab_seq[grep(lab_seq, pattern=LAB, fixed = TRUE)]) > 0){
+        ## Access the first element because TUR_007 has two groups
+    lab_seq[grep(lab_seq, pattern=LAB)][1] %>% read.csv() %>%
     seq_plot()} else {cat("TBA")}
     
     cat("<p>")

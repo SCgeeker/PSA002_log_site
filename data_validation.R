@@ -17,7 +17,7 @@ Sys.setlocale("LC_ALL","English")
 
 # Gather the note from labratories.
 # Participants' data with these words are excluded
-excluded_words <- c("had to leave","SP crashed","didnt finish qualtrics","már volt","SP & PP Would not work properly
+excluded_words <- c("had to leave","SP crashed","PP crashed","didnt finish qualtrics","már volt","SP & PP Would not work properly
 ")
 
 ## Get the data info from csv file 
@@ -64,7 +64,7 @@ for(LAB in data_dir){
     names(lab_note) <- c("SEED","SUBJID","Note")
     new_rawdata_log = new_rawdata_log[,1:6]
   }
-    
+  
   ## Combine the latest lab log
   rawdata_log <- bind_rows(rawdata_log, 
                            new_rawdata_log)
