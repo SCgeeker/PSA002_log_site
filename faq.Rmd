@@ -1,3 +1,36 @@
 ---
-title: "FAQ"
+title: "Frequently asked questions by experimenters"
 ---
+
+- How do we organize the data files in lab OSF?
+
+Save all the data files and log sheet in the root path. You will find the examples in the leading researchers’ OSF: https://osf.io/6mern/ 
+
+
+- Could we upload all the data once we collected 50 participants or till our planned sample size?
+
+We suggest a lab upload their collected data and log sheet after every working day. This practice will help your lab identify any experimenters’ mistakes during data collection. The leading PI will update [the progress site](https://scgeeker.github.io/PSA002_log_site/) when we received OSF alters.
+
+
+- What happened if our experimenters checked 002 SP as the first task at the beginning of the SP script, but in fact we started at 003 as the lab log indicates?
+
+Because the records in SP data files and lab log are inconsistent, the data will not pass the validation process. In this case, you will have to write the comment "Wrong choice, Correct sequence" in the lab log. 
+
+
+- What if our experimenters checked “none of above” at the beginning of SP script?
+
+If your participants ran the tasks as the lab log, you will have to write the comment "Wrong order option".
+ 
+- What if we did not assign the participant ID as listed in the lab log? What if we did not input our lab seed number?
+
+The stimuli lists have been assigned to your participants when the lab log was generated. Participant could not get the planned stimuli list when the experimenters did not input the assigned ID or input the seed number. Your lab will have to collect the data for this ID from the next participants.
+
+
+- How do we record the date on the lab log?
+
+We do not decide the format in consideration of the loading in every participating lab. The recommended information included date, month, and year in digits. For example, 12/25/2019 stands for Xmas Day of 2019. If the dates on the lab log were empty or were inconsistent with the data files, the participants’ data will not pass the validation process.
+
+
+- What is the function of the SIGN column?
+
+SIGN column recorded who in your lab collected the data of this participant. Your experimenter can sign it with their initials. The signature records are the evidence of contributorships in the final report.

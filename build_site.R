@@ -44,6 +44,10 @@ rmarkdown::render("index.Rmd", output_format = "html_document", output_dir = "do
 #update the about page
 rmarkdown::render("about.Rmd", output_format = "html_document", output_dir = "docs")
 
+#update the faq page
+rmarkdown::render("faq.Rmd", output_format = "html_document", output_dir = "docs")
+
+
 #update Languages
 rmarkdown::render("English.Rmd", output_format = "html_document", output_dir = "docs")
 rmarkdown::render("TC.Rmd", output_format = "html_document", output_dir = "docs")

@@ -9,6 +9,9 @@ navbar:
     - text: "About"
       icon: fa-info
       href: about.html
+    - text: "FAQ"
+      icon: fa-question
+      href: faq.html
     - text: "Tracking Logs"
       icon: fa-globe
       menu:
