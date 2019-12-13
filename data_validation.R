@@ -5,7 +5,7 @@
 # Download rawdata from lab OSF
 # Written by Sau-Chin Chen
 # E-mail: pmsp96@gmail.com
-# Last update: December 11, 2019
+# Last update: December 13, 2019
 #############################################################
 
 library(tidyverse)
@@ -18,7 +18,7 @@ Sys.setlocale("LC_ALL","English")
 # Gather the note from labratories.
 # Participants' data with these words are excluded
 excluded_words <- c("had to leave","SP crashed","PP crashed","didnt finish qualtrics","már volt","SP & PP Would not work properly
-")
+","Completed Task A in Chinese")
 
 ## Get the data info from csv file 
 data_info <- dirname(getwd()) %>%
@@ -86,7 +86,7 @@ for(LAB in data_dir){
   ## Code the SP files beyond 100k
   SP_ind <- ((SP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_SP_|_sp_|-SP_|-SP-", recursive = TRUE, full.names = TRUE)) %>%
       file.info() %>%
-      select(size) > 100000) %>%
+      select(size) > 90000) %>%
       which()
   
   ## Extract valid Lab seed
