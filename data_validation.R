@@ -5,7 +5,7 @@
 # Download rawdata from lab OSF
 # Written by Sau-Chin Chen
 # E-mail: pmsp96@gmail.com
-# Last update: December 13, 2019
+# Last update: December 19, 2019
 #############################################################
 
 library(tidyverse)
@@ -154,6 +154,11 @@ rawdata_log[rawdata_log$SEED==5186, "DATE"] = rawdata_log %>% filter(SEED==5186)
 
 ## Change date format of THA_001 lab log
 rawdata_log[rawdata_log$SEED==7236, "DATE"] = rawdata_log %>% filter(SEED==7236) %>% 
+  mutate(DATE = DATE %>% parse_date_time(order="dmy") %>% as.character()) %>%
+  pull(DATE)
+
+## Change date format of GBR_043 lab log
+rawdata_log[rawdata_log$SEED==5620, "DATE"] = rawdata_log %>% filter(SEED==5620) %>% 
   mutate(DATE = DATE %>% parse_date_time(order="dmy") %>% as.character()) %>%
   pull(DATE)
 
