@@ -5,7 +5,7 @@
 # Download rawdata from lab OSF
 # Written by Sau-Chin Chen
 # E-mail: pmsp96@gmail.com
-# Last update: December 19, 2019
+# Last update: January 18, 2020
 #############################################################
 
 library(tidyverse)
@@ -52,10 +52,12 @@ for(LAB in data_dir){
   ## Check the first line of a csv file
   new_rawdata_log_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = paste0(LAB,".csv"), recursive = TRUE, full.names = TRUE)
   if(read.table(new_rawdata_log_path, nrows = 1)$V1 %>% str_detect(";") == TRUE){
-    new_rawdata_log <- read.csv2(new_rawdata_log_path)  %>% filter((DATE!= ""))
+    new_rawdata_log <- read.csv2(new_rawdata_log_path, encoding = "UTF-8")  %>% filter((DATE!= ""))
   } else {
-    new_rawdata_log <- read.csv(new_rawdata_log_path)  %>% filter((DATE!= ""))
+    new_rawdata_log <- read.csv(new_rawdata_log_path, encoding = "UTF-8")  %>% filter((DATE!= ""))
   }
+  
+  #new_rawdata_log <- tibble(new_rawdata_log)
 
   ## Extract lab note from lab log
   lab_note <- NULL
@@ -142,7 +144,8 @@ for(LAB in data_dir){
 
 ## Save rawdata lab log 
 rawdata_log %>%
-  write.csv(file=paste0(old_path,"/1_raw_data/rawdata_log.csv"),row.names = FALSE)
+  fwrite(file=paste0(old_path,"/1_raw_data/rawdata_log.csv"), row.names = FALSE)
+#  write.csv(file=paste0(old_path,"/1_raw_data/rawdata_log.csv"),row.names = FALSE)
 
 ## Clean date formats
 require(lubridate)
