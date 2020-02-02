@@ -80,7 +80,8 @@ read.csv(rawdata_V_path) %>%
                     format(format="%Y-%m-%d")), 
           lastest_date = max(parse_date_time(datetime,orders = c('mdy HMS','b d HMS Y','a b d HMS Y')) %>%
                        ##max(parse_date_time(DATE,orders = c('dmy','mdy','ymd','dmy, h.m','ymd, h:m')) %>%
-                               format(format="%Y-%m-%d")))
+                               format(format="%Y-%m-%d"))), 
+   by="PSA_ID"
 )
 
 lab_fin <- read.csv(lab_fin_path)
