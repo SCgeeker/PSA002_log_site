@@ -70,5 +70,6 @@ for(osf_id in lab_info$osfid){
   setwd(old_path)
 }
 
+## Update the latest data size of each participating team.
 data_info <- bind_cols(subset(lab_info, Publicity == "Yes"), N_files = N_files)
 write.csv(data_info, file=paste0(old_path,"/1_raw_data/data_info.csv"), row.names = FALSE)
