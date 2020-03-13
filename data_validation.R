@@ -99,8 +99,8 @@ for(LAB in data_dir){
     lapply(read.csv) %>% rbindlist(fill = TRUE) %>%
     filter(Task == "V") %>% mutate_if(is.integer, as.character) %>%
       ## Retreive the columns for summary
-      select(datetime,LAB_SEED,subject_nr,task_order,List,Match,Orientation,PList,Probe,Target,response_time,correct,opensesame_codename,opensesame_version)) %>%
-      arrange(LAB_SEED, as.numeric(subject_nr))
+      select(datetime,LAB_SEED, logfile, subject_nr,task_order,List,Match,Orientation,PList,Probe,Target,response_time,correct,opensesame_codename,opensesame_version)) %>%
+      arrange(LAB_SEED, as.numeric(logfile))
   ## Filter invalid lab seed
   rawdata_SP_V <- rawdata_SP_V %>% filter(LAB_SEED %in% valid_SEED)
   
@@ -114,7 +114,7 @@ for(LAB in data_dir){
       rbindlist(fill = TRUE) %>%
     filter(Task == "M") %>% mutate_if(is.integer, as.character) %>%
     ## Retreive the columns for summary 
-    select(datetime,LAB_SEED,subject_nr,List,PList,Probe,response_time,correct,opensesame_codename,opensesame_version,alt_task)  )
+    select(datetime,LAB_SEED, logfile,subject_nr,List,PList,Probe,response_time,correct,opensesame_codename,opensesame_version,alt_task)  )
   ## Filter invalid lab seed
   rawdata_SP_M <- rawdata_SP_M %>% filter(LAB_SEED %in% valid_SEED)
   
@@ -132,7 +132,7 @@ for(LAB in data_dir){
   rawdata_PP <- bind_rows(rawdata_PP, PP_path[PP_ind]  %>%
     lapply(read.csv) %>% rbindlist(fill = TRUE) %>% mutate_if(is.integer, as.character) %>%
       ## Retreive the columns for summary
-      select(datetime,LAB_SEED,subject_nr,PPList,Orientation1,Orientation2,Identical,Picture1,Picture2,response_time,correct,opensesame_codename,opensesame_version))
+      select(datetime,LAB_SEED, logfile,subject_nr,PPList,Orientation1,Orientation2,Identical,Picture1,Picture2,response_time,correct,opensesame_codename,opensesame_version))
   ## Filter invalid lab seed
   rawdata_PP <- rawdata_PP %>% filter(LAB_SEED %in% valid_SEED)
   
