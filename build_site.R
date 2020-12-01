@@ -16,7 +16,7 @@ setwd(here::here() )
 ## Clean site when we have to add new lab data
 rmarkdown::clean_site()
 
-## Get the lab info from csv file 
+## Get the lab info from csv file
 ## We stored lab info in the directory "log"
 lab_info <- dirname(getwd()) %>%
     dir(full.names = TRUE, recursive = TRUE, include.dirs = TRUE, pattern = "Lab_info.csv")  %>%
