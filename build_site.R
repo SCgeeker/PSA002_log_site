@@ -11,7 +11,7 @@
 
 library(tidyverse)
 # Build the Site ----------------------------------------------------------
-setwd(here::here() )
+setwd(paste0(here::here(),"/2_seq_web/"))
 
 ## Clean site when we have to add new lab data
 rmarkdown::clean_site()
@@ -27,12 +27,22 @@ source("download_osf.R")
 
 # Validate the Data
 setwd(here::here() )
-source("data_validation.R")
+## Process lab data
+source("./2_seq_web/data_validation.R")
+## Process online data
+source("./2_seq_web/tidy_jatos_data.R")
 
 # Run the sequential analysis
-source("data_seq_analysis.R")
+source("./2_seq_web/data_seq_analysis.R")
+
+# Update the completion code log
+code_log <- read_csv("jatos_meta.csv") %>%
+  select(Batch, identifier) %>%
+  rename(Lab = Batch) %>%
+  rename(code = identifier)
 
 # Knit the new files
+setwd(paste0(here::here(),"/2_seq_web/" ))
 
 #update the index file
 rmarkdown::render("index.Rmd", output_format = "html_document", output_dir = "docs")
@@ -43,6 +53,7 @@ rmarkdown::render("index.Rmd", output_format = "html_document", output_dir = "do
 
 #update the about page
 rmarkdown::render("about.Rmd", output_format = "html_document", output_dir = "docs")
+code_log %>% write_csv(file="docs/code.csv")
 
 #update the faq page
 rmarkdown::render("faq.Rmd", output_format = "html_document", output_dir = "docs")
@@ -66,3 +77,4 @@ rmarkdown::render("Slovak.Rmd", output_format = "html_document", output_dir = "d
 rmarkdown::render("Hindi.Rmd", output_format = "html_document", output_dir = "docs")
 rmarkdown::render("Greek.Rmd", output_format = "html_document", output_dir = "docs")
 rmarkdown::render("Hebrew.Rmd", output_format = "html_document", output_dir = "docs")
+

@@ -14,7 +14,7 @@ library(dplyr)
 library(osfr)
 
 ##set working directory to current project folder
-setwd(here::here())
+#setwd(here::here())
 
 
 ## Check the status of the data osf
@@ -28,44 +28,46 @@ N_files <- NULL
 for(osf_id in lab_info$osfid){
   ## Check the publicity of lab OSF
   if(subset(lab_info, osfid == osf_id)$Publicity == "Yes"){
-    
+
   ##look at their project
   cr_project <- osf_retrieve_node(osf_id)
-  
+
   ## Get file list from OSF
-  osf_data <- osf_ls_files(cr_project,n_max = Inf)
-  
+  ## Select .csv files only
+  osf_data <- osf_ls_files(cr_project,n_max = Inf, pattern = ".csv")
+
   ## Get the number of files
   N_files <- c(N_files,dim(osf_data)[1])
-  
+
   ##make sure this lab OSF is public & has collected data
-  if(subset(lab_info, osfid == osf_id)$N > 0 & 
+  if(subset(lab_info, osfid == osf_id)$N > 0 &
      tail(N_files,1) > 10){
-    
+
       ## Check if the folder exists to put the data
       if(!dir.exists(paths=paste0(old_path,"/1_raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))){
         dir.create(paste0(old_path,"/1_raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))
       }
-    
+
       ## Switch the working directory
       setwd(paste0(old_path,"/1_raw_data/",as.character(subset(lab_info, osfid == osf_id)$PSA_ID)))
-    
-      ## Grab the list of files in the directory
+
+      ## Grab the list of files in the local directory
       Lab_files <- list.files()
-    
+
       ## Find the differences
       Download_files <- setdiff(osf_data$name, Lab_files)
-    
-      ## If there are new files, download them  
+
+      ## If there are new files, download them
       if(length(Download_files) > 0) {
 
         osf_data %>%
-          filter(name %in% Download_files) %>% 
+          filter(name %in% Download_files) %>%
           {split(., 1:nrow(.))} %>%
           lapply(osf_download, path= .$name, overwrite = TRUE)
         }
      }
   }
+  print( paste(subset(lab_info, osfid == osf_id)$PSA_ID, "downloaded") )
   ## Switch back to the root directory
   setwd(old_path)
 }

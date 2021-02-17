@@ -13,7 +13,7 @@ library(data.table)
 library(magrittr)
 
 # Import multiple-bytes string in English system
-Sys.setlocale("LC_ALL","English") 
+Sys.setlocale("LC_ALL","English")
 
 ##set working directory to current project folder
 setwd(here::here())
@@ -22,7 +22,7 @@ setwd(here::here())
 require(BayesFactor)
 
 BF_sequential <- function(DF, acc, scale=0.707){
-  
+
   data <- DF %>%
     group_by(subject_nr) %>%
     subset(correct == 1)
@@ -31,25 +31,25 @@ BF_sequential <- function(DF, acc, scale=0.707){
   data <- data %>% left_join(tmp_ind,by=c("subject_nr"="id")) %>%
     group_by(end_seq, subject_nr, Match) %>%
     summarise(V_RT = median(response_time, na.rm = TRUE), V_Accuracy = (n()/16) )
-  
+
   bfProg <- matrix(0, ncol = 3, nrow = length(unique(data$end_seq)) )
   colnames(bfProg) <- c("ID","N", "BF")
-  
+
   for(i in data$end_seq){
-    
+
     ## Initial Point
     if(i < 3){
       bfProg[i, "ID"] <- as.numeric(names(tmp_seq)[i])
       bfProg[i, "N"] <- 1
       bfProg[i, "BF"] <- 1
     }
-    
+
     if(i > 2){
       ## BF analysis for large and small objects
       ## Save the current sample size
       bfProg[i, "ID"] <- as.numeric(names(tmp_seq)[i])
       bfProg[i, "N"] <- i
-      
+
       bfProg[i, "BF"] <- (ttestBF(
         x = data %>%
           filter(end_seq %in% (1:i), Match == "N") %>%
@@ -64,16 +64,16 @@ BF_sequential <- function(DF, acc, scale=0.707){
           extractBF(onlybf = TRUE))[1] #%>%
       #round(2)
     }
-    
-    
+
+
   }
-  
+
   data.frame(bfProg)
 }
 
 # Processing lab data
-rawdata_SP_V <- dirname(getwd()) %>% 
-                dir(pattern = "rawdata_SP_V", 
+rawdata_SP_V <- dirname(getwd()) %>%
+                dir(pattern = "rawdata_SP_V",
                     recursive = TRUE, full.names = TRUE) %>% read.csv
 
 ## Setup of randomization seed
@@ -81,10 +81,12 @@ set.seed(100)
 
 ## Run sequential analysis and export the result to lab folder
 for(LAB in unique(rawdata_SP_V$PSA_ID)){
-  route <- dirname(getwd()) %>% 
-          dir(pattern = paste0(LAB,"$"), 
+  ## Get the raw data from the storage path
+  route <- dirname(paste0(getwd(),"/1_raw_data/")) %>%
+          dir(pattern = paste0(LAB,"$"),
             recursive = TRUE, full.names = TRUE, include.dirs = TRUE)
-  
+
   BF_sequential(subset(rawdata_SP_V, PSA_ID == LAB)) %>%
     write.csv(file = paste0(route,"/Seq_output.csv"),row.names = FALSE)
+  print(paste(LAB,"analyzed"))
 }
