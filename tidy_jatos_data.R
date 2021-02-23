@@ -23,7 +23,11 @@ jatos_metas <- meta_path %>%
 
 # import lab rawdata files
 osweb_rawdata <- data_path %>%
-  map_df(~read_csv(.))
+  map_dfr(~read_csv(.))
+
+osweb_rawdata <- lapply(data_path, read_csv)
+
+osweb_rawdata <- Reduce(function(x, y) merge(x, y, all=TRUE), osweb_rawdata )
 
 # Merge meta data and rawdata
 all_rawdata <- jatos_metas %>% right_join(osweb_rawdata, by=c(`Result ID` = "jatosStudyResultId"))

@@ -23,11 +23,13 @@ lab_info <- dirname(getwd()) %>%
     read.csv()
 
 # Download the data
+# This script is unavailable since all labs can not collect data in the lab
 source("download_osf.R")
 
 # Validate the Data
 setwd(here::here() )
 ## Process lab data
+# This script is unavailable since all labs can not collect data in the lab
 source("./2_seq_web/data_validation.R")
 ## Process online data
 source("./2_seq_web/tidy_jatos_data.R")
