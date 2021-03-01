@@ -37,7 +37,7 @@ source("./2_seq_web/tidy_jatos_data.R")
 # Run the sequential analysis
 source("./2_seq_web/data_seq_analysis.R")
 
-# Update the completion code log
+# Update the completion code log on website
 code_log <- read_csv("jatos_meta.csv") %>%
   select(Batch, identifier) %>%
   rename(Lab = Batch) %>%

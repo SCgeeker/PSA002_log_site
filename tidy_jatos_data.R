@@ -3,6 +3,9 @@
 
 # load required packages
 if(!require(tidyverse)) {install.packages("tidyverse");library(tidyverse)} else (library(tidyverse))
+if(!require(lubridate)) {install.packages("lubridate");library(lubridate)} else (library(lubridate))
+if(!require(stringr)) {install.packages("stringr");library(stringr)} else (library(stringr))
+
 
 # Import multiple-bytes string in English system
 Sys.setlocale("LC_ALL","English")
@@ -22,15 +25,14 @@ jatos_metas <- meta_path %>%
   map_df(~read_csv(.))
 
 # import lab rawdata files
-osweb_rawdata <- data_path %>%
-  map_dfr(~read_csv(.))
-
 osweb_rawdata <- lapply(data_path, read_csv)
 
 osweb_rawdata <- Reduce(function(x, y) merge(x, y, all=TRUE), osweb_rawdata )
 
 # Merge meta data and rawdata
-all_rawdata <- jatos_metas %>% right_join(osweb_rawdata, by=c(`Result ID` = "jatosStudyResultId"))
+all_rawdata <- jatos_metas %>% right_join(osweb_rawdata, by=c(`Result ID` = "jatosStudyResultId")) %>%
+  mutate(datetime = (datetime %>% substr(5,24) %>%  parse_date_time("%m/ %d/ %y/ HMS", tz = "GMT") - datetime %>% substr(29,33) %>% as.numeric()/100) %>% substr(1,10))
+
 
 # participants' identity code, language proficency, post survey
 online_meta <- all_rawdata %>% filter(!is.na(response_Survey_response)) %>%

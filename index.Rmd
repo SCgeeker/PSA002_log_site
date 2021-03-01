@@ -75,10 +75,10 @@ read.csv(rawdata_V_path) %>%
   group_by(PSA_ID) %>% 
   ##group_by(SEED) %>%
   summarise(collected_N = length(unique(subject_nr)), 
-          begin_date = min(parse_date_time(datetime,orders = c('mdy HMS','b d HMS Y')) %>%
+          begin_date = min(parse_date_time(datetime,orders = c('mdy HMS','b d HMS Y','ymd')) %>%
                        ##min(parse_date_time(DATE,orders = c('dmy','mdy','ymd','dmy, h.m','ymd, h:m')) %>%
                     format(format="%Y-%m-%d")), 
-          lastest_date = max(parse_date_time(datetime,orders = c('mdy HMS','b d HMS Y','a b d HMS Y')) %>%
+          lastest_date = max(parse_date_time(datetime,orders = c('mdy HMS','b d HMS Y','a b d HMS Y','ymd')) %>%
                        ##max(parse_date_time(DATE,orders = c('dmy','mdy','ymd','dmy, h.m','ymd, h:m')) %>%
                                format(format="%Y-%m-%d"))), 
    by="PSA_ID"

@@ -61,8 +61,9 @@ for(LAB in data_dir){
 
   ## Extract lab note from lab log
   lab_note <- NULL
-  if(dim(new_rawdata_log)[2] > 6){
-    lab_note <- new_rawdata_log[,c(1,2,7)]
+## Disable `if` criterion because the study has been moved to online at 2021
+  if(dim(new_rawdata_log)[2] > 0){
+    lab_note <- new_rawdata_log[,c(1,2,6)]
     names(lab_note) <- c("SEED","SUBJID","Note")
     new_rawdata_log = new_rawdata_log[,1:6]
   }

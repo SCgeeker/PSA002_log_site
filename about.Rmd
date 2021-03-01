@@ -17,5 +17,5 @@ This website is generaged by `rmarkdown` package. You will find the example in [
 - 2019/11/7 Data validataion checked; The site shows the date time information on the top page.
 - 2019/12/6 Mark the laboratories had finished data collection. Provide FAQ for the participanting labs.
 - 2020/03/14 Since 2020 March, some labs in North America and Europe difficultly continue data connection because of cornovirus. Labs who had suspended data collection before the planned N: USA_173, PSA_001
-- 2020/02/17 First online data is available. Lab staff could access the completion code from [this file](code.csv).
-
+- 2021/02/17 First online data is available. Lab staff could access the completion code from [this file](code.csv).
+- 2021/03/01 Make all data summary updated on the top page. POR001 got the wrong seed number (for NZL_001) when they collected the data. I manually switched the SEED because NZL_001 did not collect data before pandemic. 
