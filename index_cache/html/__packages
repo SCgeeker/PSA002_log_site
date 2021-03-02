@@ -1,4 +1,5 @@
 base
+workflowr
 tidyverse
 ggplot2
 tibble
@@ -8,11 +9,10 @@ purrr
 dplyr
 stringr
 forcats
-osfr
 data.table
 magrittr
 lubridate
 coda
 Matrix
 BayesFactor
-workflowr
+osfr
