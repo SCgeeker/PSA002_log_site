@@ -1,5 +1,11 @@
 base
+methods
 workflowr
+datasets
+utils
+grDevices
+graphics
+stats
 tidyverse
 ggplot2
 tibble
@@ -9,10 +15,13 @@ purrr
 dplyr
 stringr
 forcats
+readbulk
+googledrive
+googlesheets4
+osfr
 data.table
 magrittr
 lubridate
 coda
 Matrix
 BayesFactor
-osfr
