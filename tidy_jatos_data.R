@@ -12,7 +12,7 @@ Sys.setlocale("LC_ALL","English")
 
 # locate lab meta file
 meta_path <- getwd() %>%
-  paste0("/0_log/") %>%
+  paste0("/1_raw_data") %>%
   list.files(pattern="jatos_meta_[0-9]{14}.csv",all.files = TRUE,full.names = TRUE, recursive = TRUE,include.dirs = TRUE)
 
 # locate lab rawdata files
@@ -20,27 +20,68 @@ data_path <- getwd() %>%
   paste0("/1_raw_data") %>%
   list.files(pattern="jatos_results_[0-9]{14}.csv",all.files = TRUE,full.names = TRUE, recursive = TRUE,include.dirs = TRUE)
 
+# merge meta and data files path by path
+step = 0
+all_rawdata <- NULL
+for(meta_origin in meta_path) {
+  step = step + 1
+  jatos_metas <- read_csv(meta_origin)
+  colnames(jatos_metas) = gsub(names(jatos_metas), pattern = " ",replacement = "")
+
+  for(data_origin in data_path){
+#    print(meta_origin)
+#    print(data_origin)
+   osweb_rawdata <- read_csv(data_origin)
+   # Merge meta data and rawdata
+   tmp_rawdata <- subset(jatos_metas, State == "FINISHED") %>% inner_join(osweb_rawdata, by=c(`Result ID` = "jatosStudyResultId")) %>%
+     mutate(datetime = (datetime %>% substr(5,24) %>%  parse_date_time("%m/ %d/ %y/ HMS", tz = "GMT") - datetime %>% substr(29,33) %>% as.numeric()/100) %>% substr(1,10))  %>%
+     ## select the available variables for the analysis
+     select(`Result ID`,Batch,identifier, lang_prof,Question,response_Survey_response, title, datetime, sessionid, Task, jatosVersion, List, Match, Orientation, subject_parity, Probe, Target, response_time, correct, opensesame_codename, opensesame_version, starts_with("check_"),PPList, Orientation1, Orientation2, Identical, Picture1, Picture2, trial_seq, response_time, correct_Probe_sti_response)
+
+   tmp_rawdata$response_Survey_response <- as.character(tmp_rawdata$response_Survey_response)
+
+   if(step == 1){
+     all_rawdata = tmp_rawdata
+   } else {
+     all_rawdata = bind_rows(all_rawdata, tmp_rawdata)
+   }
+ }
+
+}
+
+
+
+## Take a rest 2021/3/11
+
+## all_rawdata <-do.call("rbind",all_rawdata)
+
+  ##Reduce(function(x, y) merge(x, y, all=TRUE), all_rawdata )
+
+
 # import lab meta file
-jatos_metas <- meta_path %>%
-  map_df(~read_csv(.))
+##jatos_metas <- meta_path %>%
+##  map_df(~read_csv(.))
 
 # import lab rawdata files
-osweb_rawdata <- lapply(data_path, read_csv)
+##osweb_rawdata <- lapply(data_path, read_csv)
 
-osweb_rawdata <- Reduce(function(x, y) merge(x, y, all=TRUE), osweb_rawdata )
+##osweb_rawdata <- Reduce(function(x, y) merge(x, y, all=TRUE), osweb_rawdata )
 
 # Merge meta data and rawdata
-all_rawdata <- jatos_metas %>% right_join(osweb_rawdata, by=c(`Result ID` = "jatosStudyResultId")) %>%
-  mutate(datetime = (datetime %>% substr(5,24) %>%  parse_date_time("%m/ %d/ %y/ HMS", tz = "GMT") - datetime %>% substr(29,33) %>% as.numeric()/100) %>% substr(1,10))
+##all_rawdata <- jatos_metas %>% right_join(osweb_rawdata, by=c(`Result ID` = "jatosStudyResultId")) %>%
+##  mutate(datetime = (datetime %>% substr(5,24) %>%  parse_date_time("%m/ %d/ %y/ HMS", tz = "GMT") - datetime %>% substr(29,33) %>% as.numeric()/100) %>% substr(1,10))
 
 
 # participants' identity code, language proficency, post survey
-online_meta <- all_rawdata %>% filter(!is.na(response_Survey_response)) %>%
-  select(`Result ID`,Batch,identifier, lang_prof,Question,response_Survey_response) %>%
-  spread(Question,response_Survey_response) %>%
-  rename(gender="Your gender?<br/>Press the number or key representing your answer",
-         digit3= "The third digit of your birth year?<br/>e.g., if you were born in 2001, press \"0\".",
-         digit4= "The  fourth digit of your birth year?<br/>e.g., if you were born in 2001, press \"1\".") %>%
+online_meta <- all_rawdata %>%
+  filter(!is.na(response_Survey_response)) %>%
+  select(`Result ID`,Batch,identifier, lang_prof,response_Survey_response) %>%
+  mutate(PostQ = rep(c("gender","digit3","digit4"),length(response_Survey_response)/3)) %>%
+  distinct() %>%
+  spread(key=PostQ, value=response_Survey_response, convert = TRUE) %>%
+#  rename(gender="Your gender?<br/>Press the number or key representing your answer",
+#         digit3= "The third digit of your birth year?<br/>e.g., if you were born in 2001, press \"0\".",
+#         digit4= "The  fourth digit of your birth year?<br/>e.g., if you were born in 2001, press \"1\".") %>%
   mutate(birth_year = paste0(digit3,digit4)) %>%
   select(Batch, `Result ID`,identifier, lang_prof, gender, birth_year)
 
@@ -116,3 +157,4 @@ jatos_PP$PPList = as.character(jatos_PP$PPList)
 ## Bind with lab data
 (rawdata_PP <- read_csv(file = "1_raw_data/rawdata_PP.csv") %>% bind_rows(jatos_PP)) %>%
   write_csv(file = "1_raw_data/rawdata_PP.csv")
+

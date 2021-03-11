@@ -15,13 +15,10 @@ purrr
 dplyr
 stringr
 forcats
-readbulk
-googledrive
-googlesheets4
-osfr
+lubridate
 data.table
 magrittr
-lubridate
 coda
 Matrix
 BayesFactor
+osfr
