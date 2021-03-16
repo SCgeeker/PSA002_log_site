@@ -26,6 +26,7 @@ all_rawdata <- NULL
 for(meta_origin in meta_path) {
   step = step + 1
   jatos_metas <- read_csv(meta_origin)
+  ## Erase the tab in the column names
   colnames(jatos_metas) = gsub(names(jatos_metas), pattern = " ",replacement = "")
 
   for(data_origin in data_path){
@@ -33,10 +34,13 @@ for(meta_origin in meta_path) {
 #    print(data_origin)
    osweb_rawdata <- read_csv(data_origin)
    # Merge meta data and rawdata
-   tmp_rawdata <- subset(jatos_metas, State == "FINISHED") %>% inner_join(osweb_rawdata, by=c(`Result ID` = "jatosStudyResultId")) %>%
+   tmp_rawdata <- subset(jatos_metas, State == "FINISHED") %>%
+##     filter(minute(parse_time(Duration)) > 5)  %>%
+     left_join(osweb_rawdata, by=c(`Result ID` = "jatosStudyResultId")) %>%
      mutate(datetime = (datetime %>% substr(5,24) %>%  parse_date_time("%m/ %d/ %y/ HMS", tz = "GMT") - datetime %>% substr(29,33) %>% as.numeric()/100) %>% substr(1,10))  %>%
      ## select the available variables for the analysis
-     select(`Result ID`,Batch,identifier, lang_prof,Question,response_Survey_response, title, datetime, sessionid, Task, jatosVersion, List, Match, Orientation, subject_parity, Probe, Target, response_time, correct, opensesame_codename, opensesame_version, starts_with("check_"),PPList, Orientation1, Orientation2, Identical, Picture1, Picture2, trial_seq, response_time, correct_Probe_sti_response)
+     ## 20210316 note: Some participants' post-study responses were incompatible with the whole data sheet. Use "count_Survey_response" to locate the post-study responses.
+     select(`Result ID`, Batch, identifier, lang_prof, Question, response_Survey_response, count_Survey_response, title, datetime, sessionid, Task, jatosVersion, List, Match, Orientation, subject_parity, Probe, Target, response_time, correct, opensesame_codename, opensesame_version, starts_with("check_"), PPList, Orientation1, Orientation2, Identical, Picture1, Picture2, trial_seq, response_time, correct_Probe_sti_response)
 
    tmp_rawdata$response_Survey_response <- as.character(tmp_rawdata$response_Survey_response)
 
@@ -51,37 +55,13 @@ for(meta_origin in meta_path) {
 
 
 
-## Take a rest 2021/3/11
-
-## all_rawdata <-do.call("rbind",all_rawdata)
-
-  ##Reduce(function(x, y) merge(x, y, all=TRUE), all_rawdata )
-
-
-# import lab meta file
-##jatos_metas <- meta_path %>%
-##  map_df(~read_csv(.))
-
-# import lab rawdata files
-##osweb_rawdata <- lapply(data_path, read_csv)
-
-##osweb_rawdata <- Reduce(function(x, y) merge(x, y, all=TRUE), osweb_rawdata )
-
-# Merge meta data and rawdata
-##all_rawdata <- jatos_metas %>% right_join(osweb_rawdata, by=c(`Result ID` = "jatosStudyResultId")) %>%
-##  mutate(datetime = (datetime %>% substr(5,24) %>%  parse_date_time("%m/ %d/ %y/ HMS", tz = "GMT") - datetime %>% substr(29,33) %>% as.numeric()/100) %>% substr(1,10))
-
-
 # participants' identity code, language proficency, post survey
 online_meta <- all_rawdata %>%
-  filter(!is.na(response_Survey_response)) %>%
+  filter(count_Survey_response %in% c(0,1,2)) %>%
   select(`Result ID`,Batch,identifier, lang_prof,response_Survey_response) %>%
-  mutate(PostQ = rep(c("gender","digit3","digit4"),length(response_Survey_response)/3)) %>%
+  mutate(PostQ = rep(c("gender","digit3","digit4"),length(identifier)/3)) %>%
   distinct() %>%
   spread(key=PostQ, value=response_Survey_response, convert = TRUE) %>%
-#  rename(gender="Your gender?<br/>Press the number or key representing your answer",
-#         digit3= "The third digit of your birth year?<br/>e.g., if you were born in 2001, press \"0\".",
-#         digit4= "The  fourth digit of your birth year?<br/>e.g., if you were born in 2001, press \"1\".") %>%
   mutate(birth_year = paste0(digit3,digit4)) %>%
   select(Batch, `Result ID`,identifier, lang_prof, gender, birth_year)
 
@@ -135,6 +115,9 @@ jatos_SP_M <- all_rawdata %>% filter(Task=="SP") %>%
 jatos_SP_M$SEED = as.numeric(as.factor(jatos_SP_M$SEED))
 jatos_SP_M$logfile = as.character(jatos_SP_M$logfile)
 jatos_SP_M$List = as.character(jatos_SP_M$List)
+jatos_SP_M$Match
+
+read_csv(file = "1_raw_data/rawdata_SP_M.csv")
 
 ## Bind with lab data
 (rawdata_SP_M <- read_csv(file = "1_raw_data/rawdata_SP_M.csv") %>% bind_rows(jatos_SP_M)) %>%
