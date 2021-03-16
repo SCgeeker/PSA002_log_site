@@ -21,10 +21,10 @@ data_path <- getwd() %>%
   list.files(pattern="jatos_results_[0-9]{14}.csv",all.files = TRUE,full.names = TRUE, recursive = TRUE,include.dirs = TRUE)
 
 # merge meta and data files path by path
-step = 0
+#step = 0
 all_rawdata <- NULL
 for(meta_origin in meta_path) {
-  step = step + 1
+ # step = step + 1
   jatos_metas <- read_csv(meta_origin)
   ## Erase the tab in the column names
   colnames(jatos_metas) = gsub(names(jatos_metas), pattern = " ",replacement = "")
@@ -44,7 +44,7 @@ for(meta_origin in meta_path) {
 
    tmp_rawdata$response_Survey_response <- as.character(tmp_rawdata$response_Survey_response)
 
-   if(step == 1){
+   if(is.null(all_rawdata)){
      all_rawdata = tmp_rawdata
    } else {
      all_rawdata = bind_rows(all_rawdata, tmp_rawdata)
@@ -115,9 +115,6 @@ jatos_SP_M <- all_rawdata %>% filter(Task=="SP") %>%
 jatos_SP_M$SEED = as.numeric(as.factor(jatos_SP_M$SEED))
 jatos_SP_M$logfile = as.character(jatos_SP_M$logfile)
 jatos_SP_M$List = as.character(jatos_SP_M$List)
-jatos_SP_M$Match
-
-read_csv(file = "1_raw_data/rawdata_SP_M.csv")
 
 ## Bind with lab data
 (rawdata_SP_M <- read_csv(file = "1_raw_data/rawdata_SP_M.csv") %>% bind_rows(jatos_SP_M)) %>%
