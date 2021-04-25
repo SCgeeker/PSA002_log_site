@@ -30,7 +30,7 @@ BF_sequential <- function(DF, acc, scale=0.707){
   tmp_ind <- data.frame(id = rep(names(tmp_seq) %>% as.numeric(), tmp_seq), end_seq = rep(names(tmp_seq) %>% order(), tmp_seq))
   data <- data %>% left_join(tmp_ind,by=c("subject_nr"="id")) %>%
     group_by(end_seq, subject_nr, Match) %>%
-    summarise(V_RT = median(response_time, na.rm = TRUE), V_Accuracy = (n()/16) )
+    summarise(V_RT = median(response_time, na.rm = TRUE), V_Accuracy = (n()/12) )
 
   bfProg <- matrix(0, ncol = 3, nrow = length(unique(data$end_seq)) )
   colnames(bfProg) <- c("ID","N", "BF")
@@ -73,7 +73,7 @@ BF_sequential <- function(DF, acc, scale=0.707){
 
 # Processing lab data
 rawdata_SP_V <- dirname(getwd()) %>%
-                dir(pattern = "rawdata_SP_V",
+                dir(pattern = "all_rawdata_SP_V",
                     recursive = TRUE, full.names = TRUE) %>% read.csv
 
 ## Setup of randomization seed
@@ -82,9 +82,9 @@ set.seed(100)
 ## Run sequential analysis and export the result to lab folder
 for(LAB in unique(rawdata_SP_V$PSA_ID)){
   ## Get the raw data from the storage path
-  route <- dirname(paste0(getwd(),"/1_raw_data/")) %>%
+  route <- (dirname(paste0(getwd(),"/1_raw_data/")) %>%
           dir(pattern = paste0(LAB,"$"),
-            recursive = TRUE, full.names = TRUE, include.dirs = TRUE)
+            recursive = TRUE, full.names = TRUE, include.dirs = TRUE))[1]  ## Make sure only one target directory
 
   BF_sequential(subset(rawdata_SP_V, PSA_ID == LAB)) %>%
     write.csv(file = paste0(route,"/Seq_output.csv"),row.names = FALSE)

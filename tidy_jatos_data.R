@@ -3,6 +3,7 @@
 
 # load required packages
 if(!require(tidyverse)) {install.packages("tidyverse");library(tidyverse)} else (library(tidyverse))
+if(!require(magrittr)) {install.packages("magrittr");library(magrittr)} else (library(magrittr))
 if(!require(lubridate)) {install.packages("lubridate");library(lubridate)} else (library(lubridate))
 if(!require(stringr)) {install.packages("stringr");library(stringr)} else (library(stringr))
 
@@ -92,7 +93,7 @@ jatos_SP_V$List = as.character(jatos_SP_V$List)
 
 ## Bind with lab data
 (rawdata_SP_V <- read_csv(file = "1_raw_data/rawdata_SP_V.csv") %>% bind_rows(jatos_SP_V)) %>%
-  write_csv(file = "1_raw_data/rawdata_SP_V.csv")
+  write_csv(file = "1_raw_data/all_rawdata_SP_V.csv")
 
 ## Processing memory check data
 jatos_SP_M <- all_rawdata %>% filter(Task=="SP") %>%
@@ -101,12 +102,12 @@ jatos_SP_M <- all_rawdata %>% filter(Task=="SP") %>%
   distinct() %>%
   arrange(`Result ID`, trial_seq) %>%
   inner_join(all_rawdata, by=c("Batch","Result ID","trial_seq") ) %>%
-  select(Batch, title, datetime, sessionid, `Result ID`, jatosVersion, List, Match, Orientation, subject_parity, Probe, Target, response_time, correct_Probe_sti_response, opensesame_codename, opensesame_version, starts_with("check_")) %>%
+  select(Batch, title, datetime, sessionid, `Result ID`, jatosVersion, List, subject_parity, Probe, response_time, correct_Probe_sti_response, opensesame_codename,  starts_with("check_")) %>%
   rename(PSA_ID = Batch) %>%
   rename(subject_nr = `Result ID`) %>%
   rename(SEED = title ) %>%
   rename(logfile = sessionid) %>%
-  rename(task_order = jatosVersion) %>%
+#  rename(task_order = jatosVersion) %>%
   rename(PList = subject_parity) %>%
   rename(correct = correct_Probe_sti_response ) %>%
   unite("alt_task",starts_with("check_"),sep = ",")
@@ -117,8 +118,14 @@ jatos_SP_M$logfile = as.character(jatos_SP_M$logfile)
 jatos_SP_M$List = as.character(jatos_SP_M$List)
 
 ## Bind with lab data
-(rawdata_SP_M <- read_csv(file = "1_raw_data/rawdata_SP_M.csv") %>% bind_rows(jatos_SP_M)) %>%
-  write_csv(file = "1_raw_data/rawdata_SP_M.csv")
+rawdata_SP_M <- read_csv(file = "1_raw_data/rawdata_SP_M.csv")
+## change the data type of some columns
+rawdata_SP_M$SEED <- as.character(rawdata_SP_M$SEED)
+rawdata_SP_M$logfile <- as.double(rawdata_SP_M$logfile)
+rawdata_SP_M$List <- as.double(rawdata_SP_M$List)
+## Combine and export all memory check data
+(rawdata_SP_M %>% bind_rows(jatos_SP_M)) %>%
+  write_csv(file = "1_raw_data/all_rawdata_SP_M.csv")
 
 
 # Isolate PP data
@@ -136,5 +143,5 @@ jatos_PP$PPList = as.character(jatos_PP$PPList)
 
 ## Bind with lab data
 (rawdata_PP <- read_csv(file = "1_raw_data/rawdata_PP.csv") %>% bind_rows(jatos_PP)) %>%
-  write_csv(file = "1_raw_data/rawdata_PP.csv")
+  write_csv(file = "1_raw_data/all_rawdata_PP.csv")
 

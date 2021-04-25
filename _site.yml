@@ -48,6 +48,8 @@ navbar:
           href: Hebrew.html
         - text: "Portuguesa"
           href: Portuguesa.html
+        - text: "اَلْعَرَبِيَّةُ"
+          href: Arabic.html
         - text: "简体中文"
           href: SC.html
         - text: "繁體中文"

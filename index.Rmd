@@ -20,7 +20,7 @@ lab_info_path <- dir(path="..",recursive = TRUE, pattern = "Lab_info.csv", full.
 lab_fin_path <- dir(path="..",recursive = TRUE, pattern = "lab_fin.csv", full.names = TRUE)
 
 # Get the available rawdata of verification task
-rawdata_V_path <- dir(path="..",recursive = TRUE, pattern = "rawdata_SP_V.csv", full.names = TRUE)
+rawdata_V_path <- dir(path="..",recursive = TRUE, pattern = "all_rawdata_SP_V.csv", full.names = TRUE)
 
 
 # Function of plotting sequential analysis

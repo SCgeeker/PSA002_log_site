@@ -15,9 +15,9 @@ purrr
 dplyr
 stringr
 forcats
-data.table
-magrittr
 lubridate
+magrittr
+data.table
 coda
 Matrix
 BayesFactor

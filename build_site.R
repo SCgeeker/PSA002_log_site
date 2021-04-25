@@ -14,7 +14,7 @@ library(tidyverse)
 setwd(paste0(here::here(),"/2_seq_web/"))
 
 ## Clean site when we have to add new lab data
-rmarkdown::clean_site()
+rmarkdown::clean_site(preview = FALSE)
 
 ## Get the lab info from csv file
 ## We stored lab info in the directory "log"
@@ -32,10 +32,12 @@ setwd(here::here() )
 # This script is unavailable since all labs can not collect data in the lab
 source("./2_seq_web/data_validation.R")
 ## Process online data
+###
 source("./2_seq_web/tidy_jatos_data.R")
 
 # Run the sequential analysis
 source("./2_seq_web/data_seq_analysis.R")
+## Some on line data had the repeated subject id that caused crash in the sequential analysis. "NOR_002" has this problem.
 
 # Update the completion code log on website
 code_log <- read_csv("jatos_meta.csv") %>%
@@ -79,4 +81,5 @@ rmarkdown::render("Slovak.Rmd", output_format = "html_document", output_dir = "d
 rmarkdown::render("Hindi.Rmd", output_format = "html_document", output_dir = "docs")
 rmarkdown::render("Greek.Rmd", output_format = "html_document", output_dir = "docs")
 rmarkdown::render("Hebrew.Rmd", output_format = "html_document", output_dir = "docs")
+rmarkdown::render("Arabic.Rmd", output_format = "html_document", output_dir = "docs")
 
