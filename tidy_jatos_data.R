@@ -113,7 +113,7 @@ jatos_SP_M <- all_rawdata %>% filter(Task=="SP") %>%
   unite("alt_task",starts_with("check_"),sep = ",")
 
 
-jatos_SP_M$SEED = as.numeric(as.factor(jatos_SP_M$SEED))
+jatos_SP_M$SEED = as.character(as.factor(jatos_SP_M$SEED))
 jatos_SP_M$logfile = as.character(jatos_SP_M$logfile)
 jatos_SP_M$List = as.character(jatos_SP_M$List)
 
@@ -121,8 +121,8 @@ jatos_SP_M$List = as.character(jatos_SP_M$List)
 rawdata_SP_M <- read_csv(file = "1_raw_data/rawdata_SP_M.csv")
 ## change the data type of some columns
 rawdata_SP_M$SEED <- as.character(rawdata_SP_M$SEED)
-rawdata_SP_M$logfile <- as.double(rawdata_SP_M$logfile)
-rawdata_SP_M$List <- as.double(rawdata_SP_M$List)
+rawdata_SP_M$logfile <- as.character(rawdata_SP_M$logfile)
+rawdata_SP_M$List <- as.character(rawdata_SP_M$List)
 ## Combine and export all memory check data
 (rawdata_SP_M %>% bind_rows(jatos_SP_M)) %>%
   write_csv(file = "1_raw_data/all_rawdata_SP_M.csv")
