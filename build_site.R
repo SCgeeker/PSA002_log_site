@@ -29,8 +29,8 @@ source("download_osf.R")
 # Validate the Data
 setwd(here::here() )
 ## Process lab data
-# This script is unavailable since all labs can not collect data in the lab
-source("./2_seq_web/data_validation.R")
+
+source("./2_seq_web/data_validation.R") # This script is unavailable since all labs can not collect data in the lab
 ## Process online data
 ###
 source("./2_seq_web/tidy_jatos_data.R")
