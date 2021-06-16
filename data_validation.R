@@ -126,7 +126,7 @@ for(LAB in data_dir){
   ## Code the PP files beyond 70k
   PP_ind <- ((PP_path <- dir(path = paste0(old_path,"/1_raw_data/", LAB), pattern = "_PP_|_pp_|-PP_|_pP_", recursive = TRUE, full.names = TRUE)) %>%
                file.info() %>%
-               select(size) > 70000) %>%
+               select(size) > 30000) %>% ## some files were below 70000
                which()
 
   ## Import PP verification data
