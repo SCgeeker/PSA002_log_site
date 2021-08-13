@@ -32,7 +32,7 @@ setwd(here::here() )
 
 source("./2_seq_web/data_validation.R") # This script is unavailable since all labs can not collect data in the lab
 ## Process online data
-###
+### This script has to be conducted in 
 source("./2_seq_web/tidy_jatos_data.R")
 
 # Run the sequential analysis

@@ -41,7 +41,9 @@ for(meta_origin in meta_path) {
      mutate(datetime = (datetime %>% substr(5,24) %>%  parse_date_time("%m/ %d/ %y/ HMS", tz = "GMT") - datetime %>% substr(29,33) %>% as.numeric()/100) %>% substr(1,10))  %>%
      ## select the available variables for the analysis
      ## 20210316 note: Some participants' post-study responses were incompatible with the whole data sheet. Use "count_Survey_response" to locate the post-study responses.
-     select(`Result ID`, Batch, identifier, lang_prof, Question, response_Survey_response, count_Survey_response, title, datetime, sessionid, Task, jatosVersion, List, Match, Orientation, subject_parity, Probe, Target, response_time, correct, opensesame_codename, opensesame_version, starts_with("check_"), PPList, Orientation1, Orientation2, Identical, Picture1, Picture2, trial_seq, response_time, correct_Probe_sti_response)
+     ## 20210708 note: add "correct_Target_response","correct_Probe_sti_response" that store the correctness of verification responses and memory checks
+     select(`Result ID`, Batch, identifier, lang_prof, Question, response_Survey_response, count_Survey_response, title, datetime, sessionid, Task, jatosVersion, List, Match, Orientation, subject_parity, Probe, Target, response_time, correct, correct_Target_response
+, correct_Probe_sti_response, opensesame_codename, opensesame_version, starts_with("check_"), PPList, Orientation1, Orientation2, Identical, Picture1, Picture2, trial_seq, response_time)
 
    tmp_rawdata$response_Survey_response <- as.character(tmp_rawdata$response_Survey_response)
 
@@ -54,6 +56,8 @@ for(meta_origin in meta_path) {
 
 }
 
+
+#names(all_rawdata)
 
 
 # participants' identity code, language proficency, post survey
@@ -68,18 +72,17 @@ online_meta <- all_rawdata %>%
 
 online_meta %>% write_csv(file = "jatos_meta.csv")
 
-
-
 # Isolate SP data
 ## Processing verification data
 jatos_SP_V <- all_rawdata %>% filter(Task=="SP") %>%
-  select(Batch, title, datetime, sessionid, `Result ID`, jatosVersion, List, Match, Orientation, subject_parity, Probe, Target, response_time, correct, opensesame_codename, opensesame_version) %>%
+  select(Batch, title, datetime, sessionid, `Result ID`, jatosVersion, List, Match, Orientation, subject_parity, Probe, Target, response_time, correct_Target_response, opensesame_codename, opensesame_version) %>%
   rename(PSA_ID = Batch) %>%
   rename(subject_nr = `Result ID`) %>%
   rename(SEED = title ) %>%
   rename(logfile = sessionid) %>%
   rename(task_order = jatosVersion) %>%
-  rename(PList = subject_parity)
+  rename(PList = subject_parity) %>%
+  rename(correct = correct_Target_response)
 
 jatos_SP_V$SEED = as.numeric(as.factor(jatos_SP_V$SEED))
 jatos_SP_V$logfile = as.character(jatos_SP_V$logfile)
