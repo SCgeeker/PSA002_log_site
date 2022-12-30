@@ -75,6 +75,11 @@ BF_sequential <- function(DF, acc, scale=0.707){
 rawdata_SP_V <- dirname(getwd()) %>%
                 dir(pattern = "all_rawdata_SP_V",
                     recursive = TRUE, full.names = TRUE) %>% read.csv
+# Mark Acc < .70
+rawdata_SP_V = (rawdata_SP_V %>%
+  group_by(PSA_ID, subject_nr) %>%
+  summarise(Acc_bound = (mean(correct) < .7))) %>%
+  right_join(rawdata_SP_V, by = c("PSA_ID","subject_nr"))
 
 ## Setup of randomization seed
 set.seed(100)
@@ -86,7 +91,10 @@ for(LAB in unique(rawdata_SP_V$PSA_ID)){
           dir(pattern = paste0(LAB,"$"),
             recursive = TRUE, full.names = TRUE, include.dirs = TRUE))[1]  ## Make sure only one target directory
 
-  BF_sequential(subset(rawdata_SP_V, PSA_ID == LAB)) %>%
+  BF_sequential(subset(rawdata_SP_V, (PSA_ID == LAB & Acc_bound != TRUE) )) %>% ## Revise the condition in terms of the preregistered plan
     write.csv(file = paste0(route,"/Seq_output.csv"),row.names = FALSE)
   print(paste(LAB,"analyzed"))
 }
+
+## Export the rawdata_SP_V
+write_csv(rawdata_SP_V, file = "1_raw_data/all_rawdata_SP_V.csv")

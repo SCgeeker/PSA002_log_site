@@ -24,19 +24,19 @@ lab_info <- dirname(getwd()) %>%
 
 # Download the data
 # This script is unavailable since all labs can not collect data in the lab
-source("download_osf.R")
+source("1_download_osf.R")
 
 # Validate the Data
 setwd(here::here() )
 ## Process lab data
 
-source("./2_seq_web/data_validation.R") # This script is unavailable since all labs can not collect data in the lab
+source("./2_seq_web/2_data_validation.R") # This script is unavailable since all labs can not collect data in the lab
 ## Process online data
-### This script has to be conducted in 
-source("./2_seq_web/tidy_jatos_data.R")
+### This script has to be conducted in
+source("./2_seq_web/3_tidy_jatos_data.R")
 
 # Run the sequential analysis
-source("./2_seq_web/data_seq_analysis.R")
+source("./2_seq_web/4_data_seq_analysis.R")
 ## Some on line data had the repeated subject id that caused crash in the sequential analysis. "NOR_002" has this problem.
 
 # Update the completion code log on website
